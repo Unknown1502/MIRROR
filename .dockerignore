@@ -1,0 +1,17 @@
+.env
+data
+backend/.venv
+**/__pycache__
+**/.pytest_cache
+apps/web/node_modules
+apps/web/dist
+e2e-shots
+e2e-voice-shots
+e2e-replay
+live-run
+live-browser
+live-judge
+recordings
+.git
+docs
+backend/data

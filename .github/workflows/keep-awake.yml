@@ -1,0 +1,26 @@
+name: Keep the demo awake
+
+# Free Hugging Face Spaces sleep after 48 hours without traffic. Judges should never meet a
+# cold start, so this pings the health endpoint every 6 hours.
+# Set the repository variable MIRROR_URL (Settings > Secrets and variables > Actions > Variables),
+# e.g. https://<user>-mirror.hf.space
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    if: ${{ vars.MIRROR_URL != '' }}
+    steps:
+      - name: Ping /api/v1/health
+        run: |
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /tmp/health.json -w '%{http_code}' --max-time 30 "${{ vars.MIRROR_URL }}/api/v1/health" || true)
+            echo "attempt $i: HTTP $code"
+            if [ "$code" = "200" ]; then cat /tmp/health.json; exit 0; fi
+            sleep 60   # a sleeping Space answers after it has built and started
+          done
+          exit 1

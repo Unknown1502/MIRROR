@@ -1,0 +1,363 @@
+{
+  "duration_s": 157.9,
+  "voice_metrics": {
+    "time_to_first_audio_ms": 2373.1,
+    "user_turns": 7,
+    "replies": 16,
+    "interruptions": 0,
+    "tool_calls": 7,
+    "tool_calls_discarded": 0
+  },
+  "ledger": {
+    "valid": true,
+    "length": 85,
+    "head_hash": "3be56c03c2df9112fcd756b8b79953c3b7c0859ca24e3abdfdb34021b42fd5f0",
+    "first_invalid_sequence": null,
+    "reason": null
+  },
+  "checks_passed": 8,
+  "checks_total": 8,
+  "turns": [
+    {
+      "section": "judge",
+      "said": "Move 700 units of X R 17 from Mumbai to the Pune site.",
+      "heard": "Move 700 units of XR-17 from Mumbai to the Pune site.",
+      "tool_calls": [
+        {
+          "name": "propose_transfer",
+          "args": {
+            "destination_location": "the Pune site",
+            "product": "XR-17",
+            "quantity": 700,
+            "source_location": "Mumbai"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "propose_transfer",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "There are two Pune sites. Site 1 would exceed capacity by 400 units; Site 2 remains valid. Which one do you mean?"
+      ],
+      "interrupted": false,
+      "state": "CLARIFYING",
+      "version": 1,
+      "reality": "UNCHANGED",
+      "futures": [
+        "a: 700 XR-17 MUMBAI-DC->PUNE-SITE-1 BLOCKED",
+        "b: 700 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
+      ],
+      "agent_audio_s": 7.08,
+      "turn_latency_s": 16.77,
+      "speech_end_to_final_transcript_s": 0.38,
+      "speech_end_to_first_agent_audio_s": 2.33,
+      "checks": {
+        "forked into 2 futures": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn01-user.wav",
+      "agent_wav": "turn01-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "Site 2.",
+      "heard": "Site 2.",
+      "tool_calls": [
+        {
+          "name": "clarify_transfer",
+          "args": {
+            "answer": "Site 2",
+            "transaction_id": "txn_d7426257ab8abeb7"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "clarify_transfer",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "Moving 700 XR-17 from Mumbai to Pune Site 2 is valid: Mumbai 2000 to 1300, Pune Site 2 300 to 1000. Nothing has changed. Say commit 700 to execute it."
+      ],
+      "interrupted": false,
+      "state": "PREVIEW_READY",
+      "version": 2,
+      "reality": "UNCHANGED",
+      "futures": [
+        "a: 700 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
+      ],
+      "agent_audio_s": 11.4,
+      "turn_latency_s": 18.34,
+      "speech_end_to_final_transcript_s": 1.3,
+      "speech_end_to_first_agent_audio_s": 3.36,
+      "checks": {
+        "preview 700 to Pune Site 2": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn02-user.wav",
+      "agent_wav": "turn02-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "What if I move 900?",
+      "heard": "What if I move 900?",
+      "tool_calls": [
+        {
+          "name": "simulate_transfer",
+          "args": {
+            "destination_location": "Pune Site 2",
+            "product": "XR-17",
+            "quantity": 900,
+            "source_location": "Mumbai",
+            "transaction_id": "txn_d7426257ab8abeb7"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "simulate_transfer",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "Moving 900 would leave Mumbai 100 units below its safety-stock threshold. Nothing has changed."
+      ],
+      "interrupted": false,
+      "state": "CONSEQUENCE_REVIEW",
+      "version": 3,
+      "reality": "UNCHANGED",
+      "futures": [
+        "a: 900 XR-17 MUMBAI-DC->PUNE-SITE-2 BLOCKED"
+      ],
+      "agent_audio_s": 5.64,
+      "turn_latency_s": 14.03,
+      "speech_end_to_final_transcript_s": 1.33,
+      "speech_end_to_first_agent_audio_s": 4.05,
+      "checks": {
+        "900 blocked": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn03-user.wav",
+      "agent_wav": "turn03-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "What about 500?",
+      "heard": "What about 500?",
+      "tool_calls": [
+        {
+          "name": "simulate_transfer",
+          "args": {
+            "destination_location": "Pune Site 2",
+            "product": "XR-17",
+            "quantity": 500,
+            "source_location": "Mumbai",
+            "transaction_id": "txn_d7426257ab8abeb7"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "simulate_transfer",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "Moving 500 XR-17 from Mumbai to Pune Site 2 is valid: Mumbai 2000 to 1500, Pune Site 2 300 to 800. Nothing has changed. Say commit 500 to execute it."
+      ],
+      "interrupted": false,
+      "state": "PREVIEW_READY",
+      "version": 4,
+      "reality": "UNCHANGED",
+      "futures": [
+        "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
+      ],
+      "agent_audio_s": 12.36,
+      "turn_latency_s": 20.14,
+      "speech_end_to_final_transcript_s": 1.34,
+      "speech_end_to_first_agent_audio_s": 3.64,
+      "checks": {
+        "500 valid": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn04-user.wav",
+      "agent_wav": "turn04-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "Compare 500 and 900.",
+      "heard": "Compare 500 and 900.",
+      "tool_calls": [
+        {
+          "name": "compare_branches",
+          "args": {
+            "quantities": [
+              500,
+              900
+            ],
+            "transaction_id": "txn_d7426257ab8abeb7"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "compare_branches",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "500 is valid: Mumbai ends at 1500. 900 is blocked: Mumbai would drop to 1100, which is below the safety stock of 1200. Nothing has changed."
+      ],
+      "interrupted": false,
+      "state": "PREVIEW_READY",
+      "version": 4,
+      "reality": "UNCHANGED",
+      "futures": [
+        "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
+      ],
+      "agent_audio_s": 10.84,
+      "turn_latency_s": 20.09,
+      "speech_end_to_final_transcript_s": 1.33,
+      "speech_end_to_first_agent_audio_s": 4.2,
+      "checks": {
+        "compared": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn05-user.wav",
+      "agent_wav": "turn05-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "(another team ships 300 XR-17 out of Mumbai)",
+      "heard": null,
+      "tool_calls": [],
+      "tool_results": [],
+      "discarded": [],
+      "agent_said": [
+        "Heads up: reality changed under your preview. Mumbai Distribution Center XR-17 went from 2000 to 1700 (another team shipped 300). I re-simulated it. Moving 500 XR-17 from Mumbai to Pune Site 2 is valid, with a warning: Mumbai 1700 to 1200, Pune Site 2 300 to 800. Nothing has changed. Say commit 500 to execute it."
+      ],
+      "interrupted": false,
+      "state": "PREVIEW_READY",
+      "version": 5,
+      "reality": "UNCHANGED",
+      "futures": [
+        "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 WARNING"
+      ],
+      "agent_audio_s": 23.08,
+      "turn_latency_s": null,
+      "speech_end_to_final_transcript_s": null,
+      "speech_end_to_first_agent_audio_s": null,
+      "checks": {
+        "reality alert spoken": true
+      },
+      "speech": null,
+      "user_wav": null,
+      "agent_wav": "turn06-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "Commit 500.",
+      "heard": "Commit 500.",
+      "tool_calls": [
+        {
+          "name": "commit_transfer",
+          "args": {
+            "quantity": 500,
+            "transaction_id": "txn_d7426257ab8abeb7"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "commit_transfer",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "Reality diverged. I expected Mumbai 1200 and Pune Site 2 800, but the ERP shows Mumbai 1250 and Pune Site 2 750. I did not mark this as verified, and a rollback is available."
+      ],
+      "interrupted": false,
+      "state": "DIVERGED",
+      "version": 5,
+      "reality": "DIVERGED",
+      "futures": [
+        "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 WARNING"
+      ],
+      "agent_audio_s": 14.44,
+      "turn_latency_s": 21.84,
+      "speech_end_to_final_transcript_s": 1.3,
+      "speech_end_to_first_agent_audio_s": 3.3,
+      "checks": {
+        "short shipment detected as divergence": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn07-user.wav",
+      "agent_wav": "turn07-agent.wav",
+      "agent_audio_offset_s": null
+    },
+    {
+      "section": "judge",
+      "said": "Roll back.",
+      "heard": "Rollback.",
+      "tool_calls": [
+        {
+          "name": "rollback_transfer",
+          "args": {
+            "transaction_id": "txn_d7426257ab8abeb7"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "name": "rollback_transfer",
+          "ok": true,
+          "error_code": null
+        }
+      ],
+      "discarded": [],
+      "agent_said": [
+        "Rollback complete. Reality is restored, and I verified it against the ERP."
+      ],
+      "interrupted": false,
+      "state": "VERIFIED",
+      "version": 5,
+      "reality": "RESTORED",
+      "futures": [
+        "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 WARNING"
+      ],
+      "agent_audio_s": 4.92,
+      "turn_latency_s": 11.33,
+      "speech_end_to_final_transcript_s": 0.16,
+      "speech_end_to_first_agent_audio_s": 2.77,
+      "checks": {
+        "rolled back to the real pre-commit world": true
+      },
+      "speech": "sapi:Microsoft Zira Desktop",
+      "user_wav": "turn08-user.wav",
+      "agent_wav": "turn08-agent.wav",
+      "agent_audio_offset_s": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+# Live LLM Gateway check, 2026-09-26T09:45Z, model qwen3.5-4b-32k-fast, 31 s between calls (account limit 2 req/min)
+PASS  free-form request -> valid preview
+      said   : I'd like to get 500 of the XR-17 relays over to Pune Site 2 from Mumbai
+      model  : qwen3.5-4b-32k-fast action=propose 1079 ms request_id=528b2736-1926-4ba1-b759-1c42681dadcf
+      reply  : Moving 500 XR-17 from Mumbai to Pune Site 2 is valid: Mumbai 2000 to 1500, Pune Site 2 300 to 800. Nothing has changed. Say commit 500 to execute it.
+PASS  free-form what-if 900 -> blocked future
+      said   : could you see what happens with 900 instead
+      model  : deterministic compiler action=None  request_id=None
+      reply  : Moving 900 would leave Mumbai 100 units below its safety-stock threshold. Nothing has changed.
+PASS  free-form comparison
+      said   : put 500 next to 900 so I can see both
+      model  : qwen3.5-4b-32k-fast action=compare 1049 ms request_id=1862622c-9f8f-40be-aad0-15ef5507c280
+      reply  : 500 is valid: Mumbai ends at 1500. 900 is blocked: Mumbai would drop to 1100, below safety stock 1200. Nothing has changed.
+PASS  agreement without 'commit' executes nothing
+      said   : yep sounds right to me
+      model  : qwen3.5-4b-32k-fast action=commit 1723 ms request_id=dbd123c4-35f7-4a71-8502-23377f79d2fa
+      reply  : There is no valid preview to commit yet. Resolve the open question or choose a valid future first.
+PASS  free-form stock question answered from the ERP
+      said   : how's our XR-17 stock looking in Delhi
+      model  : qwen3.5-4b-32k-fast action=query 995 ms request_id=efbf5dd7-a598-4b23-b5d5-ea93a02cadae
+      reply  : Delhi Warehouse has 1500.
+PASS  free-form cancel
+      said   : let's scrap this whole thing
+      model  : qwen3.5-4b-32k-fast action=cancel 1142 ms request_id=d2f9b218-d1d4-4a09-a946-bf4628dc438c
+      reply  : Cancelled. Nothing changed.
+LLM GATEWAY LIVE: 6/6

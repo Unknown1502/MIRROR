@@ -1,0 +1,134 @@
+{
+  "recorded_at": "2026-09-26",
+  "agent_voice": "AssemblyAI Voice Agent API (voice: alba)",
+  "user_voice": "synthesized speech (Windows SAPI) streamed as microphone audio",
+  "checks": "8/8",
+  "audio_seconds": 106.9,
+  "steps": [
+    {
+      "kind": "turn",
+      "said": "Move 700 units of X R 17 from Mumbai to the Pune site.",
+      "heard": "Move 700 units of XR-17 from Mumbai to the Pune site.",
+      "agent_said": [
+        "There are two Pune sites. Site 1 would exceed capacity by 400 units; Site 2 remains valid. Which one do you mean?"
+      ],
+      "tool_calls": [
+        "propose_transfer"
+      ],
+      "user_audio": "01-user.mp3",
+      "agent_audio": "01-agent.mp3",
+      "agent_offset_s": 2.33,
+      "recorded_state": "CLARIFYING"
+    },
+    {
+      "kind": "turn",
+      "said": "Site 2.",
+      "heard": "Site 2.",
+      "agent_said": [
+        "Moving 700 XR-17 from Mumbai to Pune Site 2 is valid: Mumbai 2000 to 1300, Pune Site 2 300 to 1000. Nothing has changed. Say commit 700 to execute it."
+      ],
+      "tool_calls": [
+        "clarify_transfer"
+      ],
+      "user_audio": "02-user.mp3",
+      "agent_audio": "02-agent.mp3",
+      "agent_offset_s": 3.36,
+      "recorded_state": "PREVIEW_READY"
+    },
+    {
+      "kind": "turn",
+      "said": "What if I move 900?",
+      "heard": "What if I move 900?",
+      "agent_said": [
+        "Moving 900 would leave Mumbai 100 units below its safety-stock threshold. Nothing has changed."
+      ],
+      "tool_calls": [
+        "simulate_transfer"
+      ],
+      "user_audio": "03-user.mp3",
+      "agent_audio": "03-agent.mp3",
+      "agent_offset_s": 4.05,
+      "recorded_state": "CONSEQUENCE_REVIEW"
+    },
+    {
+      "kind": "turn",
+      "said": "What about 500?",
+      "heard": "What about 500?",
+      "agent_said": [
+        "Moving 500 XR-17 from Mumbai to Pune Site 2 is valid: Mumbai 2000 to 1500, Pune Site 2 300 to 800. Nothing has changed. Say commit 500 to execute it."
+      ],
+      "tool_calls": [
+        "simulate_transfer"
+      ],
+      "user_audio": "04-user.mp3",
+      "agent_audio": "04-agent.mp3",
+      "agent_offset_s": 3.64,
+      "recorded_state": "PREVIEW_READY"
+    },
+    {
+      "kind": "turn",
+      "said": "Compare 500 and 900.",
+      "heard": "Compare 500 and 900.",
+      "agent_said": [
+        "500 is valid: Mumbai ends at 1500. 900 is blocked: Mumbai would drop to 1100, which is below the safety stock of 1200. Nothing has changed."
+      ],
+      "tool_calls": [
+        "compare_branches"
+      ],
+      "user_audio": "05-user.mp3",
+      "agent_audio": "05-agent.mp3",
+      "agent_offset_s": 4.2,
+      "recorded_state": "PREVIEW_READY"
+    },
+    {
+      "kind": "reality",
+      "said": "(another team ships 300 XR-17 out of Mumbai)",
+      "heard": null,
+      "agent_said": [
+        "Heads up: reality changed under your preview. Mumbai Distribution Center XR-17 went from 2000 to 1700 (another team shipped 300). I re-simulated it. Moving 500 XR-17 from Mumbai to Pune Site 2 is valid, with a warning: Mumbai 1700 to 1200, Pune Site 2 300 to 800. Nothing has changed. Say commit 500 to execute it."
+      ],
+      "tool_calls": [],
+      "user_audio": null,
+      "agent_audio": "06-agent.mp3",
+      "agent_offset_s": null,
+      "recorded_state": "PREVIEW_READY",
+      "external_change": {
+        "location_id": "MUMBAI-DC",
+        "product_id": "XR-17",
+        "delta": -300,
+        "note": "another team shipped 300"
+      }
+    },
+    {
+      "kind": "turn",
+      "said": "Commit 500.",
+      "heard": "Commit 500.",
+      "agent_said": [
+        "Reality diverged. I expected Mumbai 1200 and Pune Site 2 800, but the ERP shows Mumbai 1250 and Pune Site 2 750. I did not mark this as verified, and a rollback is available."
+      ],
+      "tool_calls": [
+        "commit_transfer"
+      ],
+      "user_audio": "07-user.mp3",
+      "agent_audio": "07-agent.mp3",
+      "agent_offset_s": 3.3,
+      "recorded_state": "DIVERGED",
+      "arm_fault": "verification_mismatch"
+    },
+    {
+      "kind": "turn",
+      "said": "Roll back.",
+      "heard": "Rollback.",
+      "agent_said": [
+        "Rollback complete. Reality is restored, and I verified it against the ERP."
+      ],
+      "tool_calls": [
+        "rollback_transfer"
+      ],
+      "user_audio": "08-user.mp3",
+      "agent_audio": "08-agent.mp3",
+      "agent_offset_s": 2.77,
+      "recorded_state": "VERIFIED"
+    }
+  ]
+}

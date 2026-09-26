@@ -1,0 +1,22 @@
+# Secrets: never commit
+.env
+
+# Runtime data (databases, per-visitor sandboxes, voice usage)
+/data/
+/backend/data/
+
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Frontend
+apps/web/node_modules/
+apps/web/dist/
+*.tsbuildinfo
+
+# Local test output (screenshots, live-run audio and reports). Curated results live in docs/.
+/e2e-*/
+/live-*/
+/recordings/

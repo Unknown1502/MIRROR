@@ -1,0 +1,66 @@
+# Deploying the public demo
+
+The public demo runs the same Docker image as local production: FastAPI serves the API, the session
+WebSocket and the built UI from one origin. The AssemblyAI key stays on the server.
+
+## Hugging Face Spaces (free CPU tier)
+
+```bash
+pip install huggingface_hub
+huggingface-cli login                        # a token with write access
+python scripts/export_replay.py live-judge   # only if you re-recorded the replay
+python scripts/deploy_hf_space.py --space <hf-user>/mirror --repo-url https://github.com/<you>/mirror
+```
+
+The script:
+
+1. creates the Space with the Docker SDK (`app_port: 8000`),
+2. stores `ASSEMBLYAI_API_KEY` and `MIRROR_COMMIT_SECRET` from `.env` as Space **secrets** (never printed, never in the image),
+3. sets the public-demo configuration as Space variables (below),
+4. uploads only what the image needs: `Dockerfile`, `backend/app`, `backend/requirements.txt`, the `apps/web` sources including the recorded replay, `LICENSE`, and a Space README.
+
+`--dry-run` prints the plan without uploading; `--stage DIR` copies the Space's files into a folder so the exact image can be built locally (`docker build DIR`).
+
+The app is served at `https://<hf-user>-mirror.hf.space` and embedded at `https://huggingface.co/spaces/<hf-user>/mirror`. Give judges the `hf.space` URL: it opens full-window, and microphone permission is simplest outside an iframe.
+
+### Public-demo configuration
+
+| Variable | Value | Why |
+| --- | --- | --- |
+| `MIRROR_SANDBOX_PER_SESSION` | `true` | Every visitor gets a private copy of the ERP. One judge's commit, fault or reset never lands in another judge's demo. |
+| `VOICE_MAX_SESSION_SECONDS` | `300` | AssemblyAI time per browser session |
+| `VOICE_MAX_CONCURRENT` | `3` | Simultaneous live voice sessions |
+| `VOICE_DAILY_BUDGET_SECONDS` | `5400` (`--voice-daily-minutes 90`) | Total voice time per UTC day. The typed path and the replay keep working after it runs out. |
+| `MIRROR_RATE_LIMIT` | `true` | Per-IP and per-session request limits ([api.md](api.md#rate-limits)) |
+| `MIRROR_PROXY_HOPS` | `1` | The client IP is the one Hugging Face's proxy appended to `X-Forwarded-For`; client-supplied entries are ignored |
+| `MIRROR_FRAME_ANCESTORS` | `https://huggingface.co` | Allows the Space page to embed the app (CSP `frame-ancestors`); everything else still cannot frame it |
+| `DEMO_MODE`, `DEMO_FAULT_INJECTION` | `true` | Reset and fault controls; safe because they act on the caller's sandbox only |
+| `LLM_GATEWAY_MODEL` | `qwen3.5-4b-32k-fast` | The model this account can use. The account's gateway limit is 2 requests per minute; MIRROR honours `Retry-After` and says when free-form understanding is paused. |
+
+`MIRROR_DATA_DIR` is `/data` in the image. Without Hugging Face persistent storage, the ledger and sandboxes reset when the Space restarts, which is fine for a demo.
+
+### Keeping it awake
+
+Free Spaces sleep after 48 hours without traffic, and a sleeping Space takes a minute to wake. `.github/workflows/keep-awake.yml` pings `/api/v1/health` every 6 hours: set the repository variable `MIRROR_URL` to the `hf.space` URL after the first deploy.
+
+### Checking the deployment
+
+```bash
+curl https://<hf-user>-mirror.hf.space/api/v1/health
+python scripts/e2e_replay.py --url https://<hf-user>-mirror.hf.space --sandbox
+python scripts/e2e_live_browser.py --url https://<hf-user>-mirror.hf.space --out live-browser-hf   # uses real AssemblyAI time
+```
+
+## Any Docker host
+
+```bash
+docker compose up --build        # reads .env; data in the mirror-data volume
+```
+
+Set the same variables as above for a public host. For a server that clients reach directly, without a reverse proxy, set `MIRROR_PROXY_HOPS=0`.
+
+### Verified here, and one caveat
+
+The image was built locally from the exact Space file set and run with the public-demo configuration. The typed browser suite and the replay suite (including second-visitor isolation) pass against it, headers were checked (CSP with `frame-ancestors https://huggingface.co`, runs as uid 1000), and `HEAD /` answers 200.
+
+Live voice through Docker Desktop on the development machine did **not** work. The Docker Desktop VM's upload path is too slow on that network: a 100 KB upload from inside the container timed out after 15 s, while the host sent it in 2.5 s, and at MTU 1400 it crawled at about 6 KB/s. The voice stream needs about 64 KB/s. AssemblyAI therefore heard silence, and the relay's keepalive dropped and re-opened the connection every ~50 s (recorded as `VOICE_CONNECTION_LOST`, close code 1006). The same code passes the live voice suites when run directly on the host (13/13 browser checks, 28/28 adversarial and honesty checks). Run the live browser check against the deployed Space to confirm voice there.
