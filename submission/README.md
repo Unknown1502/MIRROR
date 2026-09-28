@@ -18,10 +18,10 @@ Sources: the [event page](https://lablab.ai/ai-hackathons/assemblyai-voice-agent
 
 | Field | Official requirement | Ours | Status |
 | --- | --- | --- | --- |
-| Project title | 2–32 characters, letters and spaces only (form rule); clear and descriptive | "MIRROR Voice Agent Safety Layer" (31) | Ready |
-| Short description | up to 255 characters | 251 characters, [descriptions.md](descriptions.md) | Ready |
-| Long description | at least 100 words: problem, solution, target audience, unique features | 604 words, including market and business model | Ready |
-| Technology and category tags | picked from lablab's lists | AssemblyAI first, then the closest matches from [descriptions.md](descriptions.md) | Pick in the form |
+| Submission title | 5–50 characters (form); lablab's site also states letters and spaces only | "MIRROR Voice Agent Safety Layer" (31) | Ready |
+| Short description | 50–255 characters | 251 characters, [descriptions.md](descriptions.md) | Ready |
+| Long description | 600–2,000 characters (form) and at least 100 words: problem, solution, target audience, unique features | 1,788 characters, 308 words, including market and business model | Ready |
+| Categories, Technologies Used | picked from lablab's lists | AssemblyAI first, then the closest matches from [descriptions.md](descriptions.md) | Pick in the form |
 | Cover image | PNG or JPG, 16:9 | [cover.png](cover.png), 1920×1080 PNG, 139 KB | Ready |
 | Video presentation | MP4, at most 5 minutes, under 300 MB; intro, then slides, then the product | [video-script.md](video-script.md), 4:45 | **Record it** |
 | Slide presentation | PDF | Slides artifact "MIRROR pitch deck", 15 slides with speaker notes: open it, fill in `[DEMO_URL]` and `[REPO_URL]` on the last slide, then Share › Export › PDF | Export it |

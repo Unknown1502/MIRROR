@@ -1,19 +1,51 @@
 # Submission texts (lablab.ai, AssemblyAI Voice Agent Hackathon)
 
-Replace `<DEMO_URL>` and `<REPO_URL>` after deploying and pushing. Limits from lablab's submission form and guide:
-title 2 to 32 characters, letters and spaces only; short description up to 255 characters; long description at least 100 words.
+The demo and repository links have their own fields in the form, so they are not in these texts.
+Limits from lablab's submission form (as it appears to participants): title 5 to 50 characters; short
+description 50 to 255 characters; long description 600 to 2,000 characters and at least 100 words.
+Paste the texts as plain text.
 
 ## Project title
 
 MIRROR Voice Agent Safety Layer
 
-(31 characters. Alternatives that also pass the form's rule: "MIRROR Counterfactual Runtime", "MIRROR See It Before It Happens".)
+(31 characters, letters and spaces only, which also satisfies the stricter rule lablab's site states. Alternatives: "MIRROR Counterfactual Runtime", "MIRROR See It Before It Happens".)
 
 ## Short description
 
 A counterfactual runtime for voice agents. MIRROR forks what you said into simulated futures, asks the one question that changes the outcome, commits only the version you approved, and checks that reality agrees. Built on AssemblyAI's Voice Agent API.
 
 ## Long description
+
+Voice agents jump from language to action. Ask one to "move 700 units of XR-17 from Mumbai to the Pune site" when there are two Pune sites, and it guesses, then writes to your inventory system. A wrong guess is only found when the stock is in the wrong place.
+
+MIRROR puts a shadow world between the voice agent and the system of record. Every reading of a command is simulated on a frozen copy of the ERP: Pune Site 1 would go 400 over capacity, Site 2 is fine, so MIRROR asks only the question that changes the outcome. Operators explore by voice ("what if I move 900?", "compare 500 and 900") and nothing real moves. Only an explicit "commit" executes, bound by a signed token to the exact version they saw. MIRROR then reads the whole ERP back: if it short-ships, the screen says "Reality diverged" and a rollback restores and re-verifies. If the ERP changes under an open preview, the agent says so unprompted.
+
+Built on AssemblyAI's Voice Agent API: recognition, turn-taking, barge-in, tool calls and speech over one server-side WebSocket. Tool calls are only proposals: held until the reply finishes, dropped if the user interrupts, and every value is checked against the user's own words. Free-form typing goes through the LLM Gateway behind the same checks.
+
+Proof: 116 tests, live runs on AssemblyAI (53/53 and 28/28 checks), and on 26 scenarios a naive voice agent took 9 unsafe actions while MIRROR took none.
+
+Who it is for: operations teams where hands are busy and mistakes are costly, starting with warehouses. AI agents are forecast to grow from $7.8B in 2025 to $52.6B in 2030 (MarketsandMarkets). Revenue from operator seats, verified transactions and ERP connectors.
+
+Try it: watch a replay of a live session, talk to it, or type. Every visitor gets a private sandbox.
+
+(1,788 characters, 308 words.)
+
+## Technologies
+
+"Categories" and "Technologies Used" are picked from lablab's own lists. Technologies: choose AssemblyAI first, then any of these that the list offers. Categories: pick the closest to voice AI, AI agents, and business or productivity.
+
+AssemblyAI Voice Agent API, AssemblyAI LLM Gateway, FastAPI, Python, SQLite (SQLAlchemy), WebSockets, React, TypeScript, Vite, Tailwind CSS, Zustand, Web Audio (AudioWorklet), Playwright, Docker, Hugging Face Spaces
+
+## Tags
+
+voice agents, AssemblyAI, speech recognition, tool calling, agent safety, human-in-the-loop, simulation, counterfactual, inventory, ERP, operations, verification, audit trail
+
+## Category
+
+Voice agents for business operations
+
+## Extended description (not for the form: over its 2,000-character limit)
 
 Voice agents jump from language to action. When an operator says "move 700 units of XR-17 from Mumbai to the Pune site" and there are two Pune sites, a typical agent guesses, or asks a generic "which one?", and then writes to the inventory system. If it guessed wrong, nobody finds out until the stock is in the wrong place.
 
@@ -33,17 +65,3 @@ Inventory is the proof domain. The contract, action plus state plus simulator pl
 
 Demo: <DEMO_URL>
 Code: <REPO_URL>
-
-## Technologies
-
-The form's technology and category tags are picked from lablab's own lists: choose AssemblyAI first, then the closest matches below.
-
-AssemblyAI Voice Agent API, AssemblyAI LLM Gateway, FastAPI, Python, SQLite (SQLAlchemy), WebSockets, React, TypeScript, Vite, Tailwind CSS, Zustand, Web Audio (AudioWorklet), Playwright, Docker, Hugging Face Spaces
-
-## Tags
-
-voice agents, AssemblyAI, speech recognition, tool calling, agent safety, human-in-the-loop, simulation, counterfactual, inventory, ERP, operations, verification, audit trail
-
-## Category
-
-Voice agents for business operations
