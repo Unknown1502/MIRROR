@@ -41,9 +41,16 @@ AssemblyAI Voice Agent API, AssemblyAI LLM Gateway, FastAPI, Python, SQLite (SQL
 
 voice agents, AssemblyAI, speech recognition, tool calling, agent safety, human-in-the-loop, simulation, counterfactual, inventory, ERP, operations, verification, audit trail
 
-## Category
+## Categories (from lablab's list, in priority order)
 
-Voice agents for business operations
+1. Voice Assistant
+2. Business
+3. ProjectFromScratch (built during this hackathon; first commit 26 Sep 2026)
+4. Productivity
+5. Security
+6. Web Application (optional)
+
+Not these: the "... Track - Raise", "Qubic ..." and "INTERNET OF AGENTS" tracks belong to other hackathons; "Late submission"; "PreExistingProject".
 
 ## Extended description (not for the form: over its 2,000-character limit)
 
