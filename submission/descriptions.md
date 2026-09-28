@@ -1,10 +1,13 @@
 # Submission texts (lablab.ai, AssemblyAI Voice Agent Hackathon)
 
-Replace `<DEMO_URL>` and `<REPO_URL>` after deploying and pushing.
+Replace `<DEMO_URL>` and `<REPO_URL>` after deploying and pushing. Limits from lablab's submission form and guide:
+title 2 to 32 characters, letters and spaces only; short description up to 255 characters; long description at least 100 words.
 
 ## Project title
 
-MIRROR: see what a voice command will do before it does it
+MIRROR Voice Agent Safety Layer
+
+(31 characters. Alternatives that also pass the form's rule: "MIRROR Counterfactual Runtime", "MIRROR See It Before It Happens".)
 
 ## Short description
 
@@ -24,12 +27,16 @@ Only an explicit "commit" executes, bound by an HMAC token to one version, one s
 
 **Try it.** The demo opens on a start page: watch a 2½-minute replay of a live session (the screen is recomputed by the server as you watch), talk to it, or type. Every visitor gets a private sandbox copy of the ERP.
 
+**Who it is for, and the business.** Operations teams in warehouses and distribution, where voice is natural because hands are busy and a wrong transfer is expensive to undo. AI agents are forecast to grow from $7.8B in 2025 to $52.6B in 2030, and warehouse management software from $4.6B to $10.0B (MarketsandMarkets). MIRROR would earn from operator seats, usage per verified transaction, paid ERP and WMS connectors, and private deployments, sold through the integrators who already install those systems.
+
 Inventory is the proof domain. The contract, action plus state plus simulator plus consequences plus commit plus verifier, fits procurement, IAM changes, cloud operations or scheduling: anywhere a voice agent can change something that is expensive to change back.
 
 Demo: <DEMO_URL>
 Code: <REPO_URL>
 
 ## Technologies
+
+The form's technology and category tags are picked from lablab's own lists: choose AssemblyAI first, then the closest matches below.
 
 AssemblyAI Voice Agent API, AssemblyAI LLM Gateway, FastAPI, Python, SQLite (SQLAlchemy), WebSockets, React, TypeScript, Vite, Tailwind CSS, Zustand, Web Audio (AudioWorklet), Playwright, Docker, Hugging Face Spaces
 

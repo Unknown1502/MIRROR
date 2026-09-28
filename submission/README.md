@@ -1,15 +1,48 @@
 # Submission kit
 
-Deadline: **30 September 2026, 15:00 UTC (20:30 IST)**. Judging: application of technology, presentation, business value, originality.
+**Deadline: 30 September 2026, 15:00 UTC (20:30 IST)**, the event's official end time. A manual submission is
+possible for 6 hours afterwards only with a valid reason and prior approval from the organizers.
 
-| lablab field | Where it is | Status |
+Sources: the [event page](https://lablab.ai/ai-hackathons/assemblyai-voice-agent-hackathon), lablab's
+[submission guide](https://lablab.ai/delivering-your-hackathon-solution) and
+[rule book](https://lablab.ai/hackathon-rules) (checked 28 September 2026).
+
+## Before you can submit
+
+1. Enroll in the hackathon on lablab.ai (the Enroll button on the event page).
+2. Connect Discord in your lablab profile **and join the lablab.ai Discord server**: lablab requires both before you can create a team.
+3. Create a team. A solo team is fine (teams are 1 to 6 people). Only the team admin, or up to 3 members given permission, can submit.
+4. Optional: lablab asks you to use a company email if you have one.
+
+## Every field of the form
+
+| Field | Official requirement | Ours | Status |
+| --- | --- | --- | --- |
+| Project title | 2–32 characters, letters and spaces only (form rule); clear and descriptive | "MIRROR Voice Agent Safety Layer" (31) | Ready |
+| Short description | up to 255 characters | 251 characters, [descriptions.md](descriptions.md) | Ready |
+| Long description | at least 100 words: problem, solution, target audience, unique features | 604 words, including market and business model | Ready |
+| Technology and category tags | picked from lablab's lists | AssemblyAI first, then the closest matches from [descriptions.md](descriptions.md) | Pick in the form |
+| Cover image | PNG or JPG, 16:9 | [cover.png](cover.png), 1920×1080 PNG, 139 KB | Ready |
+| Video presentation | MP4, at most 5 minutes, under 300 MB; intro, then slides, then the product | [video-script.md](video-script.md), 4:45 | **Record it** |
+| Slide presentation | PDF | Slides artifact "MIRROR pitch deck", 15 slides with speaker notes: open it, fill in `[DEMO_URL]` and `[REPO_URL]` on the last slide, then Share › Export › PDF | Export it |
+| Public GitHub repository | public (a private repo lowers the score) | local repo, commits ready on `main`, MIT licence | **Push it** |
+| Demo application platform | the guide suggests Streamlit, Replit or Vercel | Hugging Face Spaces (Docker). MIRROR needs a long-running server with WebSockets for live voice, which Vercel's serverless functions and Streamlit do not provide; pick "Other" or the closest option if the form asks | Deploy it |
+| Application URL | a link judges can interact with | `https://<hf-user>-mirror.hf.space` after deploying | **Deploy it** |
+
+Other rules that apply: submissions must be original and MIT-compliant (the repo is MIT-licensed); every
+project must be built on AssemblyAI (MIRROR uses the Voice Agent API and the LLM Gateway); plagiarism leads
+to disqualification.
+
+## How the rubric scores us
+
+The rule book scores each criterion from 1 to 5.
+
+| Criterion | What earns 5 | Where we answer it |
 | --- | --- | --- |
-| Title, short and long description, technologies, tags | [descriptions.md](descriptions.md) | Ready. Fill in `<DEMO_URL>` and `<REPO_URL>` |
-| Cover image (16:9) | [cover.png](cover.png) | Ready |
-| Slide presentation (PDF) | Slides artifact "MIRROR pitch deck" (private until you share it): open it, fill in `[DEMO_URL]` and `[REPO_URL]` on the last slide, then Share › Export › PDF | Ready |
-| Video presentation | [video-script.md](video-script.md) | Script ready; you record it |
-| Public GitHub repository | local repo, branch `main`, first commit made | You create the GitHub repo and push |
-| Demo application URL | `python scripts/deploy_hf_space.py --space <hf-user>/mirror`, see [../docs/deploy.md](../docs/deploy.md) | You run it (needs your Hugging Face login) |
+| Application of technology | demo video with all features, working demo link, GitHub code available | full demo in the video; the Space; public repo with tests and live results |
+| Presentation | problem, solution and value proposition in under 5 minutes, with market analysis, revenue, future plans and competitive analysis | deck slides 2–4 (problem, solution), 11 (market), 12 (revenue), 13 (competition), 14 (roadmap); the video covers each |
+| Business value | clear market potential, scalability, sustainable revenue | slides 11 and 12; the long description's business paragraph |
+| Originality | unconventional approach, new perspective | counterfactual simulation of every reading before acting, with verification and rollback (slides 3–5, 13) |
 
 ## Your steps, in order
 
@@ -24,10 +57,11 @@ Deadline: **30 September 2026, 15:00 UTC (20:30 IST)**. Judging: application of 
    huggingface-cli login
    python scripts/deploy_hf_space.py --space <hf-user>/mirror --repo-url https://github.com/<you>/mirror
    ```
-   Wait for the Space to build (a few minutes), then open `https://<hf-user>-mirror.hf.space` and watch the replay once.
-   Then check live voice there: `python scripts/e2e_live_browser.py --url https://<hf-user>-mirror.hf.space --out live-browser-hf`.
-3. **Keep it awake.** In the GitHub repository: Settings › Secrets and variables › Actions › Variables › New: `MIRROR_URL` = the `hf.space` URL.
-4. **Record the video** with [video-script.md](video-script.md) against the deployed app (or locally), and upload it (YouTube unlisted is fine).
-5. **Fill in the links** in [descriptions.md](descriptions.md) and on the deck's last slide, export the deck as PDF, and submit.
+   Wait for the Space to build (a few minutes), open `https://<hf-user>-mirror.hf.space` and watch the replay once.
+   Then have Claude run `scripts/e2e_live_browser.py` against that URL to confirm live voice there.
+3. **Keep it awake.** GitHub repository › Settings › Secrets and variables › Actions › Variables › New: `MIRROR_URL` = the `hf.space` URL.
+4. **Record the video** with [video-script.md](video-script.md) and export it as MP4 (under 5 minutes, under 300 MB).
+5. **Fill in the links** in [descriptions.md](descriptions.md) and on the deck's last slide, export the deck as PDF.
+6. **Submit on lablab** before 30 September, 15:00 UTC. Leave a margin: uploads can be slow near the deadline.
 
-Optional, if time allows: record the eight replay lines with your own voice ([../docs/human-voice.md](../docs/human-voice.md)) and re-run `live_voice_test.py --only judge` and `export_replay.py`, so the replay's user side is a real person.
+Optional: record the replay's user lines in your own voice (`python scripts/record_lines.py --who <name>`, see [../docs/human-voice.md](../docs/human-voice.md)); today they are AssemblyAI's `george` voice, labelled as an AI voice.
