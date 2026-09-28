@@ -153,6 +153,45 @@ def test_model_cannot_launder_an_unrelated_number_into_a_quantity(container):
     ("500", [500]),
     ("Seven hundred units please", [700]),
     ("Set it to 450", [450]),
+    # How speech recognition punctuates a spoken list: "compare 500, 900" (seen live).
+    ("Compare 500, 900.", [500, 900]),
+    ("compare 500 900", [500, 900]),
+    ("compare 400, 500 and 900", [400, 500, 900]),
+    # A number after a place is still not an amount, even in a list.
+    ("move XR-17 from Mumbai to Pune Site 2, 900", []),
 ])
 def test_amount_phrasings_are_recognised(container, text, expected):
     assert [q.value for q in compile_utterance(text, resolver(container)).quantities] == expected
+
+
+def test_idle_event_buffers_are_freed_but_sequences_continue():
+    from app.core.events import EventBus
+
+    bus = EventBus()
+    for _ in range(3):
+        bus.publish("sess_0000000000000001", "X", {})
+    assert bus.replay("sess_0000000000000001", 0)
+    assert bus.prune(max_idle_s=0) == 1
+    assert bus.replay("sess_0000000000000001", 0) == []
+    assert bus.publish("sess_0000000000000001", "X", {})["sequence"] == 4  # no restart at 1 for a returning client
+
+
+def test_stale_sandbox_files_are_cleaned_while_the_server_runs(tmp_path):
+    import os
+    import time as _time
+
+    from app.erp.service import MockERP
+    from app.erp.worlds import WorldRegistry
+
+    default = MockERP(f"sqlite:///{(tmp_path / 'erp.db').as_posix()}")
+    reg = WorldRegistry(default, tmp_path, per_session=True, max_open=1, ttl_hours=1, cleanup_every_s=0)
+    reg.for_session("sess_00000000000000aa")
+    reg.for_session("sess_00000000000000bb")  # closes aa (LRU of one)
+    old = _time.time() - 7200
+    for f in (tmp_path / "worlds").glob("sess_00000000000000aa.db*"):
+        os.utime(f, (old, old))
+    reg.for_session("sess_00000000000000bb")  # any later request runs the periodic cleanup
+    assert not list((tmp_path / "worlds").glob("sess_00000000000000aa.db*"))
+    assert list((tmp_path / "worlds").glob("sess_00000000000000bb.db*"))
+    reg.dispose()
+    default.engine.dispose()

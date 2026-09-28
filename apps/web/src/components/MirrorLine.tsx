@@ -53,7 +53,7 @@ const TONE = {
 export function MirrorLine() {
   const txn = useMirror((s) => s.txn)
   const world = useMirror((s) => s.world)
-  const busy = useMirror((s) => s.busy)
+  const busy = useMirror((s) => s.busy || s.replaying) // the replay owns the screen while it runs
   const commit = useMirror((s) => s.commit)
   const rollback = useMirror((s) => s.rollback)
   const abort = useMirror((s) => s.abort)
@@ -101,7 +101,7 @@ export function MirrorLine() {
             </button>
           )}
           {txn?.state === 'VERIFYING' && (
-            <button onClick={() => void reverify()} className="rounded-md border border-ink px-3 py-2 text-[13px] font-semibold">
+            <button onClick={() => void reverify()} disabled={busy} className="rounded-md border border-ink px-3 py-2 text-[13px] font-semibold">
               Read reality again
             </button>
           )}

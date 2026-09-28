@@ -147,10 +147,12 @@ _ACTION_BEFORE = re.compile(
     r"versus|vs\.?|instead|rather|only|just|up to|with)\s+(?:(?:only|just|about|like|maybe)\s+)?$",
     re.I,
 )
+# The number just before, in a spoken list: "500, 900", "500 900", "400, 500 and 900".
+_LIST_BEFORE = re.compile(r"(\d+(?:,\d{3})*)\s*(?:,|&|and|or)?\s*$", re.I)
 _BARE_NUMBER = re.compile(r"^\W*(?:(?:uh|um|ok|okay|yes|yeah|so|make it)\W+)?%s\W*(?:units?|please)?\W*$")
 
 
-def in_quantity_position(text: str, q: Mention) -> bool:
+def in_quantity_position(text: str, q: Mention, _depth: int = 0) -> bool:
     """True when the grammar around a number says it is the amount to act on.
 
     "move 700", "700 units", "make that 500", "what about 500", "compare 500 and 900", or a bare
@@ -160,7 +162,16 @@ def in_quantity_position(text: str, q: Mention) -> bool:
         return True
     if _ACTION_BEFORE.search(text[max(0, q.start - 40):q.start]):
         return True
-    return bool(re.match(_BARE_NUMBER.pattern % re.escape(q.text), text.strip(), re.I))
+    if re.match(_BARE_NUMBER.pattern % re.escape(q.text), text.strip(), re.I):
+        return True
+    # A list continues an amount: in "compare 500, 900" the 900 counts because the 500 does.
+    # "Site 2, 900" does not, because the 2 is not an amount.
+    m = _LIST_BEFORE.search(text[max(0, q.start - 24):q.start]) if _depth < 6 else None
+    if m:
+        offset = max(0, q.start - 24)
+        prev = Mention("quantity", m.group(1), offset + m.start(1), offset + m.end(1), MATCH_NUMBER)
+        return in_quantity_position(text, prev, _depth + 1)
+    return False
 
 
 def find_ordinal(text: str) -> tuple[int, str] | None:

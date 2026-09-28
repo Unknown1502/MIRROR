@@ -26,13 +26,14 @@ def main() -> int:
     ap.add_argument("--shots", default="e2e-replay")
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--sandbox", action="store_true", help="also check that a second visitor's world is untouched")
+    ap.add_argument("--browser", default="chromium", choices=["chromium", "firefox", "webkit"])
     args = ap.parse_args()
     shots = Path(args.shots)
     shots.mkdir(parents=True, exist_ok=True)
     n = 0
 
     with sync_playwright() as p:
-        browser = launch(p, args.headed)
+        browser = launch(p, args.headed, args.browser)
         ctx = browser.new_context(viewport={"width": 1440, "height": 900})
         page = ctx.new_page()
         errors: list[str] = []
@@ -46,7 +47,7 @@ def main() -> int:
 
         page.goto(args.url)
         expect(page.get_by_role("heading", level=1)).to_contain_text("See what a voice command will do before it does it.")
-        expect(page.get_by_role("button", name="Watch the 2-minute replay")).to_be_visible()
+        expect(page.get_by_role("button", name="Watch the 2½-minute replay")).to_be_visible()
         page.wait_for_timeout(900)  # entrance animation
         shot("landing")
 
@@ -68,6 +69,7 @@ def main() -> int:
         bar.get_by_role("button", name="1.25×").click()  # now 1.5x
         futures = page.get_by_label("Possible futures")
         status = page.get_by_role("status")
+        expect(page.get_by_label("Command")).to_be_disabled()  # the replay owns the screen while it runs
 
         expect(futures).to_contain_text("Future B", timeout=30000)
         expect(futures).to_contain_text("Over capacity by 400")
@@ -112,12 +114,13 @@ def main() -> int:
 
         page.get_by_role("button", name="Try it yourself").click()
         expect(bar).to_have_count(0)
+        expect(page.get_by_label("Command")).to_be_enabled()
 
         real = [e for e in errors if "favicon" not in e]
         if real:
             print("Browser errors:", *real, sep="\n  ")
             return 1
-        print(f"REPLAY E2E PASS: landing, mobile landing, 8-step replay at 1.5x ({replay_s:.0f}s), reality alert, divergence, rollback"
+        print(f"REPLAY E2E PASS [{args.browser}]: landing, mobile landing, 8-step replay at 1.5x ({replay_s:.0f}s), reality alert, divergence, rollback"
               + (", second visitor isolated" if args.sandbox else ""))
         browser.close()
     return 0

@@ -54,7 +54,7 @@ export function Header({ onReplay }: { onReplay: () => void }) {
 
         <button
           onClick={() => void toggleVoice()}
-          disabled={!voiceAvailable && !live}
+          disabled={(!voiceAvailable && !live) || replaying}
           title={voiceAvailable ? 'Stream your microphone to the AssemblyAI Voice Agent through the MIRROR backend' : 'Set ASSEMBLYAI_API_KEY on the server to enable voice'}
           className={`flex items-center gap-2.5 rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-colors ${
             live ? 'border-ink bg-ink text-glass' : 'border-ink text-ink hover:bg-ink hover:text-glass disabled:border-rule disabled:text-ink-faint disabled:hover:bg-transparent'

@@ -19,8 +19,11 @@ _SAFE_ID = re.compile(r"^[a-z]+_[0-9a-f]{16}$")
 
 
 class WorldRegistry:
-    def __init__(self, default: MockERP, data_dir: Path, per_session: bool, max_open: int = 64, ttl_hours: float = 24.0):
+    def __init__(self, default: MockERP, data_dir: Path, per_session: bool, max_open: int = 64, ttl_hours: float = 24.0,
+                 cleanup_every_s: float = 900.0):
         self.default = default
+        self.cleanup_every_s = cleanup_every_s
+        self._last_cleanup = time.monotonic()
         self.per_session = per_session
         self.dir = data_dir / "worlds"
         self.max_open = max_open
@@ -37,6 +40,9 @@ class WorldRegistry:
         if not _SAFE_ID.match(session_id):  # the id becomes a file name
             raise ValueError("invalid session id")
         with self._lock:
+            if time.monotonic() - self._last_cleanup > self.cleanup_every_s:  # a long-running demo keeps its disk bounded
+                self._last_cleanup = time.monotonic()
+                self.cleanup()
             erp = self._open.get(session_id)
             if erp is not None:
                 self._open.move_to_end(session_id)

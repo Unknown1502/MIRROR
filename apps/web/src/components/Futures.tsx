@@ -6,7 +6,7 @@ import { Gauge } from './Gauge'
 export function Futures() {
   const txn = useMirror((s) => s.txn)
   const world = useMirror((s) => s.world)
-  const busy = useMirror((s) => s.busy)
+  const busy = useMirror((s) => s.busy || s.replaying) // the replay owns the screen while it runs
   const selectFuture = useMirror((s) => s.selectFuture)
 
   const ver = txn ? currentVersion(txn.versions, txn.current_version) : undefined

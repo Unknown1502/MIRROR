@@ -78,7 +78,9 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
       return a
     }
 
-    const play = (name: string | null) =>
+    // `seconds` is the clip's recorded length: if a browser never reports the end of playback
+    // (or cannot decode the file), the replay moves on instead of waiting forever.
+    const play = (name: string | null, seconds?: number | null) =>
       new Promise<void>((resolve, reject) => {
         if (!name || c.skip) return resolve()
         const a = clip(name)
@@ -91,13 +93,16 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
           c.audio = null
           resolve()
         }
+        const limit = ((seconds ?? 30) + 2.5) * 1000
+        let played = 0
         const t = window.setInterval(() => {
+          if (!c.paused) played += 50 * c.speed
           if (run.cancelled) {
             a.pause()
             window.clearInterval(t)
             c.audio = null
             reject(new Cancelled())
-          } else if (c.skip) {
+          } else if (c.skip || played > limit) {
             a.pause()
             done()
           }
@@ -120,7 +125,7 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
       if (s.kind === 'turn') {
         setPhase('user')
         st.replayLine('user', s.heard ?? s.said)
-        await play(s.user_audio)
+        await play(s.user_audio, s.user_s)
         check()
         setPhase('runtime')
         await Promise.all([store().replayTurn(s.heard ?? s.said), wait(900)])
@@ -136,7 +141,7 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
       check()
       setPhase('agent')
       for (const line of s.agent_said) store().replayLine('agent', line)
-      await play(s.agent_audio)
+      await play(s.agent_audio, s.agent_s)
       await wait(800)
     }
 

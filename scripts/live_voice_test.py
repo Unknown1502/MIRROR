@@ -136,6 +136,9 @@ class Live:
         self.out = out
         self.voice = voice
         self.recordings = recordings
+        # SPEAKER.txt marks clips made by an AI voice (scripts/ai_voice_lines.py); anything else is a person.
+        marker = recordings / "SPEAKER.txt" if recordings else None
+        self.speaker = marker.read_text(encoding="utf-8").strip() if marker and marker.exists() else "human"
         self.last_source: str | None = None
         self.last_pcm: bytes = b""
         self.sid, _ = container.runtime.create_session()
@@ -195,7 +198,7 @@ class Live:
         if self.recordings:
             hit = find_recording(self.recordings, text)
             if hit is not None:
-                return decode_recording(hit), f"human:{hit.name}"
+                return decode_recording(hit), f"{self.speaker}:{hit.name}"
         path = self.out / "speech" / f"{hashlib.sha1((self.voice + text).encode()).hexdigest()[:12]}.wav"
         return synthesize(text, path, self.voice), f"sapi:{self.voice}"
 
@@ -572,6 +575,23 @@ SECTIONS = {
 }
 
 
+def line_sections(sections: list[str]) -> dict[str, list[str]]:
+    """Every line the given sections speak, in order, with the sections that use it."""
+    lines: dict[str, list[str]] = {}
+    for name in sections:
+        src = inspect.getsource(SECTIONS[name])
+        found = re.findall(r'L\.(?:turn\("[\w-]+", |speak\()"([^"]+)"', src)
+        for group in re.findall(r"for text in \(([^)]*)\)", src):
+            found += re.findall(r'"([^"]+)"', group)
+        for text in found:
+            lines.setdefault(text, []).append(name)
+    return lines
+
+
+def spoken_lines(sections: list[str]) -> list[str]:
+    return list(line_sections(sections))
+
+
 async def main_async(args) -> int:
     out = Path(args.out)
     (out / "speech").mkdir(parents=True, exist_ok=True)
@@ -605,6 +625,7 @@ async def main_async(args) -> int:
     report = {
         "duration_s": round(time.monotonic() - started, 1),
         "voice_metrics": metrics,
+        "agent_voice": settings.assemblyai_voice,
         "ledger": ledger,
         "checks_passed": passed,
         "checks_total": len(all_checks),
@@ -633,14 +654,7 @@ def main() -> int:
     ap.add_argument("--list-lines", action="store_true", help="print every spoken line and its recording file name")
     a = ap.parse_args()
     if a.list_lines:
-        lines: dict[str, list[str]] = {}
-        for name, fn in SECTIONS.items():
-            src = inspect.getsource(fn)
-            found = re.findall(r'L\.(?:turn\("[\w-]+", |speak\()"([^"]+)"', src)
-            for group in re.findall(r"for text in \(([^)]*)\)", src):
-                found += re.findall(r'"([^"]+)"', group)
-            for text in found:
-                lines.setdefault(text, []).append(name)
+        lines = line_sections(list(SECTIONS))
         print(f"{len(lines)} distinct lines. Record each one and name the file as shown (any audio format ffmpeg reads).\n")
         for text, used in lines.items():
             print(f"{slug(text) + '.m4a':64} {text:58} [{', '.join(dict.fromkeys(used))}]")

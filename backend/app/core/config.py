@@ -93,7 +93,7 @@ def load_settings(**overrides) -> Settings:
         commit_secret=secret.encode(),
         assemblyai_api_key=os.environ.get("ASSEMBLYAI_API_KEY") or None,
         assemblyai_agent_url=os.environ.get("ASSEMBLYAI_AGENT_URL", DEFAULT_AGENT_URL),
-        assemblyai_voice=os.environ.get("ASSEMBLYAI_VOICE", "alba"),
+        assemblyai_voice=os.environ.get("ASSEMBLYAI_VOICE", "anna"),
         cors_origins=tuple(
             o.strip()
             for o in os.environ.get(

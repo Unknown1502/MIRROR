@@ -61,7 +61,7 @@ export function Landing({ onWatch }: { onWatch: () => void }) {
             className="flex items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-[15px] font-semibold text-glass hover:opacity-90 disabled:opacity-40"
           >
             <PlayGlyph />
-            Watch the 2-minute replay
+            Watch the 2½-minute replay
           </button>
           <button
             onClick={talk}

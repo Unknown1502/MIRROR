@@ -531,6 +531,9 @@ class VoiceRegistry:
         self.used: dict[str, float] = {}
         self._started: dict[str, float] = {}
         self._watchers: dict[str, asyncio.Task] = {}
+        # Starts in flight. A slot is reserved before the first await, so simultaneous starts
+        # (many sessions, or two sockets of one session) cannot slip past the caps.
+        self._starting: dict[str, asyncio.Future] = {}
         self.loop: asyncio.AbstractEventLoop | None = None
         self._usage_path = self.settings.data_dir / "voice_usage.json"
         self._day, self._day_used = self._load_usage()
@@ -548,11 +551,24 @@ class VoiceRegistry:
             pass
         return today, 0.0
 
-    def _add_usage(self, session_id: str, seconds: float) -> None:
-        self.used[session_id] = self.used.get(session_id, 0.0) + seconds
+    def _roll_day(self) -> None:
         today = time.strftime("%Y-%m-%d", time.gmtime())
         if today != self._day:
             self._day, self._day_used = today, 0.0
+
+    def _day_total(self) -> float:
+        """Voice seconds used today, including sessions that are live right now."""
+        self._roll_day()
+        now = time.monotonic()
+        return self._day_used + sum(now - t for t in self._started.values())
+
+    def _budget_left(self) -> float | None:
+        budget = self.settings.voice_daily_budget_seconds
+        return None if budget <= 0 else budget - self._day_total()
+
+    def _add_usage(self, session_id: str, seconds: float) -> None:
+        self.used[session_id] = self.used.get(session_id, 0.0) + seconds
+        self._roll_day()
         self._day_used += seconds
         try:
             self._usage_path.write_text(json.dumps({"day": self._day, "seconds": round(self._day_used, 1)}), encoding="utf-8")
@@ -567,7 +583,8 @@ class VoiceRegistry:
         return max(0.0, cap - self.used.get(session_id, 0.0) - live)
 
     def _live_count(self) -> int:
-        return sum(1 for b in self.bridges.values() if b.supervisor is not None and not b.supervisor.done())
+        live = sum(1 for b in self.bridges.values() if b.supervisor is not None and not b.supervisor.done())
+        return live + len(self._starting)
 
     def _check_limits(self, session_id: str) -> float | None:
         remaining = self.remaining_seconds(session_id)
@@ -584,8 +601,8 @@ class VoiceRegistry:
                 "All voice lines are busy right now. Try again in a minute, or type your commands.",
                 reason="voice_concurrency_limit",
             )
-        budget = self.settings.voice_daily_budget_seconds
-        if budget > 0 and self._day_used >= budget:
+        budget_left = self._budget_left()
+        if budget_left is not None and budget_left < 5:
             raise MirrorError(
                 ErrorCode.ASSEMBLYAI_UNAVAILABLE,
                 "Today's voice budget for this demo is used up. Typed commands still drive the same runtime.",
@@ -593,26 +610,35 @@ class VoiceRegistry:
             )
         return remaining
 
-    async def _watch(self, session_id: str, remaining: float) -> None:
+    async def _watch(self, session_id: str) -> None:
+        """Stop a live session when its own time or today's shared budget runs out."""
         try:
-            await asyncio.sleep(remaining)
+            while True:
+                limits = [x for x in (self.remaining_seconds(session_id), self._budget_left()) if x is not None]
+                if not limits:
+                    return
+                if min(limits) <= 0:
+                    break
+                await asyncio.sleep(min(5.0, max(0.2, min(limits))))
         except asyncio.CancelledError:
             return
-        bridge = self.bridges.get(session_id)
-        if bridge is None:
+        if session_id not in self.bridges:
             return
+        budget_left = self._budget_left()
+        daily = budget_left is not None and budget_left <= 0
         self.c.bus.publish(session_id, "ERROR", {
             "code": ErrorCode.ASSEMBLYAI_UNAVAILABLE.value,
-            "message": "Voice time for this demo session is up. Typed commands still drive the same runtime.",
-            "reason": "voice_time_limit",
+            "message": ("Today's voice budget for this demo is used up." if daily else "Voice time for this demo session is up.")
+                       + " Typed commands and the replay still drive the same runtime.",
+            "reason": "voice_daily_budget" if daily else "voice_time_limit",
         })
         await self.stop(session_id)
-        self.c.bus.publish(session_id, "VOICE_STOPPED", {"reason": "voice time limit"})
+        self.c.bus.publish(session_id, "VOICE_STOPPED", {"reason": "voice daily budget" if daily else "voice time limit"})
 
-    def _begin(self, session_id: str, remaining: float | None) -> None:
+    def _begin(self, session_id: str) -> None:
         self._started[session_id] = time.monotonic()
-        if remaining is not None:
-            self._watchers[session_id] = asyncio.create_task(self._watch(session_id, remaining))
+        if self.settings.voice_max_session_seconds > 0 or self.settings.voice_daily_budget_seconds > 0:
+            self._watchers[session_id] = asyncio.create_task(self._watch(session_id))
 
     def _end(self, session_id: str) -> None:
         started = self._started.pop(session_id, None)
@@ -629,11 +655,27 @@ class VoiceRegistry:
         existing = self.bridges.get(session_id)
         if existing and existing.supervisor is not None and not existing.supervisor.done():
             return existing
-        remaining = self._check_limits(session_id)
-        bridge = VoiceBridge(self.c, session_id)
-        await bridge.start()
+        pending = self._starting.get(session_id)
+        if pending is not None:  # the same session is already connecting: share that start
+            return await asyncio.shield(pending)
+        self._check_limits(session_id)
+        slot = self.loop.create_future()
+        self._starting[session_id] = slot  # no await between the check and the reservation
+        try:
+            bridge = VoiceBridge(self.c, session_id)
+            await bridge.start()
+        except BaseException as exc:
+            self._starting.pop(session_id, None)
+            if isinstance(exc, asyncio.CancelledError):
+                slot.cancel()
+            else:
+                slot.set_exception(exc)
+                slot.exception()  # retrieved: a start nobody else awaited is not an unhandled error
+            raise
+        self._starting.pop(session_id, None)
         self.bridges[session_id] = bridge
-        self._begin(session_id, remaining)
+        self._begin(session_id)
+        slot.set_result(bridge)
         return bridge
 
     async def audio(self, session_id: str, audio_b64: str) -> None:

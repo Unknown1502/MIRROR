@@ -1,17 +1,18 @@
 {
-  "duration_s": 157.9,
+  "duration_s": 181.9,
   "voice_metrics": {
-    "time_to_first_audio_ms": 2373.1,
+    "time_to_first_audio_ms": 2501.0,
     "user_turns": 7,
     "replies": 16,
     "interruptions": 0,
     "tool_calls": 7,
     "tool_calls_discarded": 0
   },
+  "agent_voice": "anna",
   "ledger": {
     "valid": true,
     "length": 85,
-    "head_hash": "3be56c03c2df9112fcd756b8b79953c3b7c0859ca24e3abdfdb34021b42fd5f0",
+    "head_hash": "22e9026428860b12706e6d041a6f4065c1de83c9c45b09d0bf93faeee1bffe91",
     "first_invalid_sequence": null,
     "reason": null
   },
@@ -52,14 +53,14 @@
         "a: 700 XR-17 MUMBAI-DC->PUNE-SITE-1 BLOCKED",
         "b: 700 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
       ],
-      "agent_audio_s": 7.08,
-      "turn_latency_s": 16.77,
-      "speech_end_to_final_transcript_s": 0.38,
-      "speech_end_to_first_agent_audio_s": 2.33,
+      "agent_audio_s": 8.55,
+      "turn_latency_s": 17.53,
+      "speech_end_to_final_transcript_s": 0.62,
+      "speech_end_to_first_agent_audio_s": 2.47,
       "checks": {
         "forked into 2 futures": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:move-700-units-of-x-r-17-from-mumbai-to-the-pune-site.wav",
       "user_wav": "turn01-user.wav",
       "agent_wav": "turn01-agent.wav",
       "agent_audio_offset_s": null
@@ -73,7 +74,7 @@
           "name": "clarify_transfer",
           "args": {
             "answer": "Site 2",
-            "transaction_id": "txn_d7426257ab8abeb7"
+            "transaction_id": "txn_10752325aa81455c"
           }
         }
       ],
@@ -95,14 +96,14 @@
       "futures": [
         "a: 700 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
       ],
-      "agent_audio_s": 11.4,
-      "turn_latency_s": 18.34,
-      "speech_end_to_final_transcript_s": 1.3,
-      "speech_end_to_first_agent_audio_s": 3.36,
+      "agent_audio_s": 16.37,
+      "turn_latency_s": 22.95,
+      "speech_end_to_final_transcript_s": 1.36,
+      "speech_end_to_first_agent_audio_s": 3.47,
       "checks": {
         "preview 700 to Pune Site 2": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:site-2.wav",
       "user_wav": "turn02-user.wav",
       "agent_wav": "turn02-agent.wav",
       "agent_audio_offset_s": null
@@ -119,7 +120,7 @@
             "product": "XR-17",
             "quantity": 900,
             "source_location": "Mumbai",
-            "transaction_id": "txn_d7426257ab8abeb7"
+            "transaction_id": "txn_10752325aa81455c"
           }
         }
       ],
@@ -141,14 +142,14 @@
       "futures": [
         "a: 900 XR-17 MUMBAI-DC->PUNE-SITE-2 BLOCKED"
       ],
-      "agent_audio_s": 5.64,
-      "turn_latency_s": 14.03,
-      "speech_end_to_final_transcript_s": 1.33,
-      "speech_end_to_first_agent_audio_s": 4.05,
+      "agent_audio_s": 7.65,
+      "turn_latency_s": 15.75,
+      "speech_end_to_final_transcript_s": 1.59,
+      "speech_end_to_first_agent_audio_s": 4.41,
       "checks": {
         "900 blocked": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:what-if-i-move-900.wav",
       "user_wav": "turn03-user.wav",
       "agent_wav": "turn03-agent.wav",
       "agent_audio_offset_s": null
@@ -165,7 +166,7 @@
             "product": "XR-17",
             "quantity": 500,
             "source_location": "Mumbai",
-            "transaction_id": "txn_d7426257ab8abeb7"
+            "transaction_id": "txn_10752325aa81455c"
           }
         }
       ],
@@ -187,14 +188,14 @@
       "futures": [
         "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
       ],
-      "agent_audio_s": 12.36,
-      "turn_latency_s": 20.14,
-      "speech_end_to_final_transcript_s": 1.34,
-      "speech_end_to_first_agent_audio_s": 3.64,
+      "agent_audio_s": 15.83,
+      "turn_latency_s": 22.94,
+      "speech_end_to_final_transcript_s": 1.44,
+      "speech_end_to_first_agent_audio_s": 3.69,
       "checks": {
         "500 valid": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:what-about-500.wav",
       "user_wav": "turn04-user.wav",
       "agent_wav": "turn04-agent.wav",
       "agent_audio_offset_s": null
@@ -202,7 +203,7 @@
     {
       "section": "judge",
       "said": "Compare 500 and 900.",
-      "heard": "Compare 500 and 900.",
+      "heard": "Compare 500, 900.",
       "tool_calls": [
         {
           "name": "compare_branches",
@@ -211,7 +212,7 @@
               500,
               900
             ],
-            "transaction_id": "txn_d7426257ab8abeb7"
+            "transaction_id": "txn_10752325aa81455c"
           }
         }
       ],
@@ -224,7 +225,7 @@
       ],
       "discarded": [],
       "agent_said": [
-        "500 is valid: Mumbai ends at 1500. 900 is blocked: Mumbai would drop to 1100, which is below the safety stock of 1200. Nothing has changed."
+        "500 is valid, leaving Mumbai with 1500 units. However, 900 is blocked because Mumbai would drop to 1100, which is below the safety stock of 1200. Nothing has changed."
       ],
       "interrupted": false,
       "state": "PREVIEW_READY",
@@ -233,14 +234,14 @@
       "futures": [
         "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 VALID"
       ],
-      "agent_audio_s": 10.84,
-      "turn_latency_s": 20.09,
-      "speech_end_to_final_transcript_s": 1.33,
-      "speech_end_to_first_agent_audio_s": 4.2,
+      "agent_audio_s": 13.73,
+      "turn_latency_s": 22.23,
+      "speech_end_to_final_transcript_s": 1.66,
+      "speech_end_to_first_agent_audio_s": 4.72,
       "checks": {
         "compared": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:compare-500-and-900.wav",
       "user_wav": "turn05-user.wav",
       "agent_wav": "turn05-agent.wav",
       "agent_audio_offset_s": null
@@ -262,7 +263,7 @@
       "futures": [
         "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 WARNING"
       ],
-      "agent_audio_s": 23.08,
+      "agent_audio_s": 31.64,
       "turn_latency_s": null,
       "speech_end_to_final_transcript_s": null,
       "speech_end_to_first_agent_audio_s": null,
@@ -283,7 +284,7 @@
           "name": "commit_transfer",
           "args": {
             "quantity": 500,
-            "transaction_id": "txn_d7426257ab8abeb7"
+            "transaction_id": "txn_10752325aa81455c"
           }
         }
       ],
@@ -296,7 +297,7 @@
       ],
       "discarded": [],
       "agent_said": [
-        "Reality diverged. I expected Mumbai 1200 and Pune Site 2 800, but the ERP shows Mumbai 1250 and Pune Site 2 750. I did not mark this as verified, and a rollback is available."
+        "Reality diverged. I expected Mumbai at 1200 and Pune Site 2 at 800, but the ERP shows Mumbai at 1250 and Pune Site 2 at 750. I did not mark this as verified, and a rollback is available."
       ],
       "interrupted": false,
       "state": "DIVERGED",
@@ -305,14 +306,14 @@
       "futures": [
         "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 WARNING"
       ],
-      "agent_audio_s": 14.44,
-      "turn_latency_s": 21.84,
-      "speech_end_to_final_transcript_s": 1.3,
-      "speech_end_to_first_agent_audio_s": 3.3,
+      "agent_audio_s": 15.94,
+      "turn_latency_s": 22.97,
+      "speech_end_to_final_transcript_s": 1.51,
+      "speech_end_to_first_agent_audio_s": 3.61,
       "checks": {
         "short shipment detected as divergence": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:commit-500.wav",
       "user_wav": "turn07-user.wav",
       "agent_wav": "turn07-agent.wav",
       "agent_audio_offset_s": null
@@ -325,7 +326,7 @@
         {
           "name": "rollback_transfer",
           "args": {
-            "transaction_id": "txn_d7426257ab8abeb7"
+            "transaction_id": "txn_10752325aa81455c"
           }
         }
       ],
@@ -338,7 +339,7 @@
       ],
       "discarded": [],
       "agent_said": [
-        "Rollback complete. Reality is restored, and I verified it against the ERP."
+        "Rollback complete. Reality is restored and I have verified the current state against the ERP."
       ],
       "interrupted": false,
       "state": "VERIFIED",
@@ -347,14 +348,14 @@
       "futures": [
         "a: 500 XR-17 MUMBAI-DC->PUNE-SITE-2 WARNING"
       ],
-      "agent_audio_s": 4.92,
-      "turn_latency_s": 11.33,
-      "speech_end_to_final_transcript_s": 0.16,
-      "speech_end_to_first_agent_audio_s": 2.77,
+      "agent_audio_s": 6.44,
+      "turn_latency_s": 13.05,
+      "speech_end_to_final_transcript_s": 0.31,
+      "speech_end_to_first_agent_audio_s": 3.56,
       "checks": {
         "rolled back to the real pre-commit world": true
       },
-      "speech": "sapi:Microsoft Zira Desktop",
+      "speech": "assemblyai:george:roll-back.wav",
       "user_wav": "turn08-user.wav",
       "agent_wav": "turn08-agent.wav",
       "agent_audio_offset_s": null

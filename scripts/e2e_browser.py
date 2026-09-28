@@ -19,7 +19,9 @@ from pathlib import Path
 from playwright.sync_api import Page, expect, sync_playwright
 
 
-def launch(p, headed: bool):
+def launch(p, headed: bool, engine: str = "chromium"):
+    if engine != "chromium":  # firefox, or webkit (Safari's engine)
+        return getattr(p, engine).launch(headless=not headed)
     for channel in ("chrome", "msedge", None):
         try:
             return p.chromium.launch(channel=channel, headless=not headed) if channel else p.chromium.launch(headless=not headed)
@@ -58,12 +60,13 @@ def main() -> int:
     ap.add_argument("--url", default="http://127.0.0.1:5173")
     ap.add_argument("--shots", default="e2e-shots")
     ap.add_argument("--headed", action="store_true")
+    ap.add_argument("--browser", default="chromium", choices=["chromium", "firefox", "webkit"])
     args = ap.parse_args()
     shots = Path(args.shots)
     shots.mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as p:
-        browser = launch(p, args.headed)
+        browser = launch(p, args.headed, args.browser)
         page = browser.new_page(viewport={"width": 1440, "height": 900})
         errors: list[str] = []
         page.on("pageerror", lambda e: errors.append(str(e)))
@@ -142,7 +145,7 @@ def main() -> int:
         if real_errors:
             print("Browser errors:", *real_errors, sep="\n  ")
             return 1
-        print(f"E2E PASS: fork, clarify, what-if, compare, commit, verify, divergence, rollback, audit ({loop_s:.1f}s for the main loop)")
+        print(f"E2E PASS [{args.browser}]: fork, clarify, what-if, compare, commit, verify, divergence, rollback, audit ({loop_s:.1f}s for the main loop)")
         print(f"Screenshots: {shots.resolve()}")
         browser.close()
     return 0

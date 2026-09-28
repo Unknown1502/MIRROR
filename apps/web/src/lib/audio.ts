@@ -40,6 +40,12 @@ class MirrorCapture extends AudioWorkletProcessor {
 registerProcessor('mirror-capture', MirrorCapture);
 `
 
+// Older Safari only has the prefixed constructor; some locked-down browsers have neither.
+function audioContextClass(): typeof AudioContext | null {
+  const w = window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }
+  return w.AudioContext ?? w.webkitAudioContext ?? null
+}
+
 function toBase64(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf)
   let binary = ''
@@ -55,6 +61,13 @@ export class MicCapture {
   private node: AudioWorkletNode | null = null
 
   async start(onChunk: (b64: string) => void, onLevel: (level: number) => void): Promise<void> {
+    const Ctx = audioContextClass()
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error('this page cannot use the microphone here (it needs HTTPS or localhost). Typed commands still work.')
+    }
+    if (!Ctx || !('audioWorklet' in Ctx.prototype)) {
+      throw new Error('this browser cannot stream microphone audio (no Web Audio worklets). Typed commands still work.')
+    }
     this.stream = await navigator.mediaDevices.getUserMedia({
       audio: {
         channelCount: 1,
@@ -63,7 +76,7 @@ export class MicCapture {
         autoGainControl: true,
       },
     })
-    this.ctx = new AudioContext()
+    this.ctx = new Ctx()
     const url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' }))
     await this.ctx.audioWorklet.addModule(url)
     URL.revokeObjectURL(url)
@@ -92,14 +105,24 @@ export class AgentPlayback {
   private sources = new Set<AudioBufferSourceNode>()
   onActivity: (playing: boolean) => void = () => undefined
 
-  private ensure(): AudioContext {
-    if (!this.ctx) this.ctx = new AudioContext()
-    if (this.ctx.state === 'suspended') void this.ctx.resume()
-    return this.ctx
+  // Audio is optional: without Web Audio the agent's words still arrive as text.
+  private ensure(): AudioContext | null {
+    try {
+      if (!this.ctx) {
+        const Ctx = audioContextClass()
+        if (!Ctx) return null
+        this.ctx = new Ctx()
+      }
+      if (this.ctx.state === 'suspended') void this.ctx.resume().catch(() => undefined)
+      return this.ctx
+    } catch {
+      return null
+    }
   }
 
   play(b64: string): void {
     const ctx = this.ensure()
+    if (!ctx) return
     const bin = atob(b64)
     const count = Math.floor(bin.length / 2)
     if (count === 0) return

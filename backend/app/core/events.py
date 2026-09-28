@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import threading
+import time
 from collections import deque
 from typing import Any
 
@@ -15,6 +16,8 @@ from .ids import iso, new_id, utcnow
 
 API_EVENT_VERSION = "1"
 REPLAY_BUFFER = 1000
+IDLE_BUFFER_TTL_S = 3600  # replay buffers of sessions with no listener and no events for this long are freed
+PRUNE_EVERY = 500  # publishes between prune passes
 
 
 class EventBus:
@@ -23,6 +26,8 @@ class EventBus:
         self._subscribers: dict[str, list[tuple[asyncio.AbstractEventLoop, asyncio.Queue]]] = {}
         self._sequence: dict[str, int] = {}
         self._buffer: dict[str, deque] = {}
+        self._last: dict[str, float] = {}
+        self._since_prune = 0
 
     def subscribe(self, session_id: str) -> asyncio.Queue:
         loop = asyncio.get_running_loop()
@@ -68,6 +73,10 @@ class EventBus:
             }
             if buffer:
                 self._buffer.setdefault(session_id, deque(maxlen=REPLAY_BUFFER)).append(envelope)
+            self._last[session_id] = time.monotonic()
+            self._since_prune += 1
+            if self._since_prune >= PRUNE_EVERY:
+                self._prune_locked(IDLE_BUFFER_TTL_S)
             subscribers = list(self._subscribers.get(session_id, ()))
         for loop, queue in subscribers:
             try:
@@ -75,6 +84,21 @@ class EventBus:
             except RuntimeError:  # loop closed; subscriber is gone
                 pass
         return envelope
+
+    def prune(self, max_idle_s: float = IDLE_BUFFER_TTL_S) -> int:
+        with self._lock:
+            return self._prune_locked(max_idle_s)
+
+    def _prune_locked(self, max_idle_s: float) -> int:
+        """Free what idle sessions hold. Sequence numbers stay, so a returning client never sees them restart."""
+        self._since_prune = 0
+        cutoff = time.monotonic() - max_idle_s
+        idle = [sid for sid, t in self._last.items() if t <= cutoff and not self._subscribers.get(sid)]
+        for sid in idle:
+            self._buffer.pop(sid, None)
+            self._subscribers.pop(sid, None)
+            self._last.pop(sid, None)
+        return len(idle)
 
     def publish_all(self, event_type: str, data: dict[str, Any] | None = None) -> None:
         with self._lock:

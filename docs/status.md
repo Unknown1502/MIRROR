@@ -20,7 +20,8 @@ Status as of 2026-09-26 (updated after the public-demo work). Categories: **LIVE
 | AssemblyAI `session.resume` | LIVE, with fallback | The live service answered every `session.resume` with `session_not_found` (tested 0.2 s, 1.5 s and 6 s after a drop, with and without `resume_token`). MIRROR tries it, then opens one fresh session and restores the open transaction as context; verified live |
 | Docker image | LIVE (typed and replay paths) | Built from the exact Hugging Face Space file set; typed and replay browser suites pass against it; runs as uid 1000. Live voice through Docker Desktop on the dev machine failed because the VM's upload path stalls ([deploy.md](deploy.md#verified-here-and-one-caveat)) |
 | Public deployment | READY, NOT DEPLOYED | `scripts/deploy_hf_space.py` (dry run verified) needs the owner's Hugging Face login; keep-awake workflow included |
-| Human-voice validation | TOOLING READY | `--recordings` mode and [human-voice.md](human-voice.md); no human recordings made yet |
+| Human-voice validation | TOOLING READY | `record_lines.py` + `--recordings` mode ([human-voice.md](human-voice.md)); no human recordings made yet. The replay uses AssemblyAI's `george` voice for the user's lines |
+| Cross-browser | LIVE | Typed and replay browser suites pass in Chromium, Firefox and WebKit |
 | Competitor research (plan parts 0–2) | DONE | 144 hackathon submissions reviewed; positioning in the submission materials |
 | Demo video, pitch deck | SCRIPT READY | [submission/](../submission/) has the video script, slides and texts; recording the video is the owner's step |
 
@@ -86,6 +87,12 @@ Status as of 2026-09-26 (updated after the public-demo work). Categories: **LIVE
 - **A client could choose its own rate-limit bucket** by sending `X-Forwarded-For`; the IP is now the entry the trusted proxy appended, and session creation has a global cap.
 - **The Hugging Face Space page could not have shown the app** (`frame-ancestors 'none'`); embedding is now allowed for a configured origin only.
 - **A re-simulation was labelled "Spoken"** in the intent strip; it now says it was re-simulated after the ERP changed.
+- **Simultaneous voice starts slipped past the caps.** Many sessions (or two sockets of one session) starting at once could each open an AssemblyAI session before any was registered, and the daily budget only counted finished sessions. Slots are now reserved before the first await, the budget includes live time, and a watchdog stops sessions at either limit.
+- **A long-running demo grew without bound**: sandbox files were only cleaned at startup and event buffers of old sessions were never freed. Both are now bounded while the server runs.
+- **Clicking during the replay desynchronized it** from the recording. The console's actions are locked while the replay runs.
+- **Typed commands crashed in a browser without Web Audio** (found with WebKit): audio is now optional, and voice explains why it cannot start.
+- **The replay could stall forever** where a browser never reports the end of a clip; each clip now has a time limit from its recorded length.
+- **"Compare 500, 900."** (how the live transcriber punctuated "compare 500 and 900") was not read as a comparison by the typed path; spoken lists now count as amounts when the first number does.
 
 ## Known limitations
 
@@ -93,7 +100,7 @@ Status as of 2026-09-26 (updated after the public-demo work). Categories: **LIVE
 - **Short phrases spoken over the agent are sometimes misheard** ("Stop" as "job", "Wait" as "Weight"). The agent asked what was meant instead of acting, so nothing unsafe followed.
 - **Live test speech is synthesized** (Windows SAPI voices), not human speech with accents or background noise.
 - The deterministic compiler covers the demo grammar and common variations. Other typed phrasing goes to the LLM Gateway, which on this account allows 2 requests per minute; beyond that MIRROR says free-form understanding is paused and standard phrasings still work.
-- The replay's user side is synthesized speech; the tooling to replace it with human recordings exists ([human-voice.md](human-voice.md)).
+- The replay's user side is AssemblyAI's `george` voice, not a person (labelled as such on the page); `scripts/record_lines.py` replaces it with a real recording ([human-voice.md](human-voice.md)).
 - Sandboxes, rate-limit counters and voice usage live in one process; the data directory is not persistent on a free Hugging Face Space.
 - Single-process concurrency model (see threat model).
 - The mock ERP enforces non-negative stock and capacity itself; route availability, safety stock and transfer limits are MIRROR policy.

@@ -14,9 +14,10 @@ const SCRIPT = [
 export function Conversation() {
   const lines = useMirror((s) => s.lines)
   const partial = useMirror((s) => s.partial)
-  const busy = useMirror((s) => s.busy)
+  const busy = useMirror((s) => s.busy || s.replaying) // the replay owns the screen while it runs
   const sendText = useMirror((s) => s.sendText)
   const voice = useMirror((s) => s.voice)
+  const replaying = useMirror((s) => s.replaying)
   const [text, setText] = useState('')
   const scroller = useRef<HTMLDivElement>(null)
 
@@ -92,7 +93,8 @@ export function Conversation() {
             id="command"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Type a command"
+            placeholder={replaying ? 'The replay is running. Exit it to type.' : 'Type a command'}
+            disabled={replaying}
             autoComplete="off"
             maxLength={500}
             className="min-w-0 flex-1 rounded-md border border-rule bg-glass px-3 py-2 text-[14px] placeholder:text-ink-faint focus:border-ink focus:outline-none"

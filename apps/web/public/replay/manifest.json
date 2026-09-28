@@ -1,9 +1,9 @@
 {
-  "recorded_at": "2026-09-26",
-  "agent_voice": "AssemblyAI Voice Agent API (voice: alba)",
-  "user_voice": "synthesized speech (Windows SAPI) streamed as microphone audio",
+  "recorded_at": "2026-09-28",
+  "agent_voice": "AssemblyAI Voice Agent API (voice: anna)",
+  "user_voice": "AssemblyAI's george voice reading the user's lines (an AI voice, not a person)",
   "checks": "8/8",
-  "audio_seconds": 106.9,
+  "audio_seconds": 130.7,
   "steps": [
     {
       "kind": "turn",
@@ -17,7 +17,9 @@
       ],
       "user_audio": "01-user.mp3",
       "agent_audio": "01-agent.mp3",
-      "agent_offset_s": 2.33,
+      "user_s": 4.73,
+      "agent_s": 8.55,
+      "agent_offset_s": 2.47,
       "recorded_state": "CLARIFYING"
     },
     {
@@ -32,7 +34,9 @@
       ],
       "user_audio": "02-user.mp3",
       "agent_audio": "02-agent.mp3",
-      "agent_offset_s": 3.36,
+      "user_s": 1.33,
+      "agent_s": 16.37,
+      "agent_offset_s": 3.47,
       "recorded_state": "PREVIEW_READY"
     },
     {
@@ -47,7 +51,9 @@
       ],
       "user_audio": "03-user.mp3",
       "agent_audio": "03-agent.mp3",
-      "agent_offset_s": 4.05,
+      "user_s": 1.91,
+      "agent_s": 7.65,
+      "agent_offset_s": 4.41,
       "recorded_state": "CONSEQUENCE_REVIEW"
     },
     {
@@ -62,22 +68,26 @@
       ],
       "user_audio": "04-user.mp3",
       "agent_audio": "04-agent.mp3",
-      "agent_offset_s": 3.64,
+      "user_s": 1.63,
+      "agent_s": 15.83,
+      "agent_offset_s": 3.69,
       "recorded_state": "PREVIEW_READY"
     },
     {
       "kind": "turn",
       "said": "Compare 500 and 900.",
-      "heard": "Compare 500 and 900.",
+      "heard": "Compare 500, 900.",
       "agent_said": [
-        "500 is valid: Mumbai ends at 1500. 900 is blocked: Mumbai would drop to 1100, which is below the safety stock of 1200. Nothing has changed."
+        "500 is valid, leaving Mumbai with 1500 units. However, 900 is blocked because Mumbai would drop to 1100, which is below the safety stock of 1200. Nothing has changed."
       ],
       "tool_calls": [
         "compare_branches"
       ],
       "user_audio": "05-user.mp3",
       "agent_audio": "05-agent.mp3",
-      "agent_offset_s": 4.2,
+      "user_s": 1.99,
+      "agent_s": 13.73,
+      "agent_offset_s": 4.72,
       "recorded_state": "PREVIEW_READY"
     },
     {
@@ -90,6 +100,8 @@
       "tool_calls": [],
       "user_audio": null,
       "agent_audio": "06-agent.mp3",
+      "user_s": null,
+      "agent_s": 31.64,
       "agent_offset_s": null,
       "recorded_state": "PREVIEW_READY",
       "external_change": {
@@ -104,14 +116,16 @@
       "said": "Commit 500.",
       "heard": "Commit 500.",
       "agent_said": [
-        "Reality diverged. I expected Mumbai 1200 and Pune Site 2 800, but the ERP shows Mumbai 1250 and Pune Site 2 750. I did not mark this as verified, and a rollback is available."
+        "Reality diverged. I expected Mumbai at 1200 and Pune Site 2 at 800, but the ERP shows Mumbai at 1250 and Pune Site 2 at 750. I did not mark this as verified, and a rollback is available."
       ],
       "tool_calls": [
         "commit_transfer"
       ],
       "user_audio": "07-user.mp3",
       "agent_audio": "07-agent.mp3",
-      "agent_offset_s": 3.3,
+      "user_s": 1.68,
+      "agent_s": 15.94,
+      "agent_offset_s": 3.61,
       "recorded_state": "DIVERGED",
       "arm_fault": "verification_mismatch"
     },
@@ -120,14 +134,16 @@
       "said": "Roll back.",
       "heard": "Rollback.",
       "agent_said": [
-        "Rollback complete. Reality is restored, and I verified it against the ERP."
+        "Rollback complete. Reality is restored and I have verified the current state against the ERP."
       ],
       "tool_calls": [
         "rollback_transfer"
       ],
       "user_audio": "08-user.mp3",
       "agent_audio": "08-agent.mp3",
-      "agent_offset_s": 2.77,
+      "user_s": 1.27,
+      "agent_s": 6.44,
+      "agent_offset_s": 3.56,
       "recorded_state": "VERIFIED"
     }
   ]

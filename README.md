@@ -16,7 +16,7 @@ SPEAK → FORK → SIMULATE → COMPARE → COMMIT → VERIFY
 
 "Move 700 units of XR-17 from Mumbai to the Pune site." There are two Pune sites, so MIRROR does not guess and does not just ask "which one?". It simulates both: Site 1 would exceed capacity by 400, Site 2 stays valid. Then it asks the question whose answer actually changes the outcome. Nothing has touched the ERP yet.
 
-**Try it:** the app opens on a start page with three ways in. *Watch the 2-minute replay* plays a recorded live AssemblyAI session while this server recomputes every future, check and number on screen. *Talk to it* starts a voice session in your browser. *Open the console* lets you type. On the public demo, every visitor gets a private sandbox copy of the ERP.
+**Try it:** the app opens on a start page with three ways in. *Watch the 2½-minute replay* plays a recorded live AssemblyAI session while this server recomputes every future, check and number on screen. *Talk to it* starts a voice session in your browser. *Open the console* lets you type. On the public demo, every visitor gets a private sandbox copy of the ERP.
 
 ## What it does
 
@@ -100,9 +100,9 @@ The full timed script, optional beats and stage recovery steps are in [docs/demo
 
 | Check | Result |
 | --- | --- |
-| Backend tests (`cd backend && .venv/Scripts/python -m pytest -q`) | 106 passed |
-| Browser E2E, typed path, dev server and production build | PASS |
-| Browser E2E, start page + replay + second-visitor isolation, incl. the Docker image | PASS |
+| Backend tests (`cd backend && .venv/Scripts/python -m pytest -q`) | 115 passed |
+| Browser E2E, typed path, in Chromium, Firefox and WebKit (Safari's engine) | PASS |
+| Browser E2E, start page + replay + second-visitor isolation, in Chromium, Firefox and WebKit, and against the Docker image | PASS |
 | **Live AssemblyAI** suite: 39 spoken turns, 31 real tool calls (`scripts/live_voice_test.py`) | **53/53 PASS** |
 | **Live AssemblyAI** after the reality watch: honesty + adversarial, spoken reality alert | **28/28 PASS** |
 | **Live AssemblyAI** judge session (the replay) | **8/8 PASS** |

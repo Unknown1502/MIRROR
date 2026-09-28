@@ -61,6 +61,81 @@ def test_voice_concurrency_cap(settings):
     run(main())
 
 
+def test_simultaneous_voice_starts_respect_the_concurrency_cap(settings):
+    """A script starting voice in many sessions at once must not slip past the cap while
+    the first connection is still waiting for session.ready."""
+    async def main():
+        fake = FakeAssemblyAI()
+        server = await websockets.serve(fake.handler, "127.0.0.1", 0)
+        c = _env(settings, server.sockets[0].getsockname()[1], voice_max_concurrent=1)
+        reg = VoiceRegistry(c)
+        a, _ = c.runtime.create_session()
+        b, _ = c.runtime.create_session()
+        fake.connected.clear()
+        ta = asyncio.create_task(reg.start(a))
+        tb = asyncio.create_task(reg.start(b))
+        await asyncio.sleep(0.2)
+        assert tb.done() and isinstance(tb.exception(), MirrorError)
+        assert tb.exception().details["reason"] == "voice_concurrency_limit"
+        await asyncio.wait_for(fake.connected.wait(), 5)
+        await fake.expect("session.update")
+        await fake.send(type="session.ready", session_id="sess_fake_a")
+        await ta
+        assert fake.connections == 1
+        await reg.stop(a)
+        server.close()
+        c.dispose()
+
+    run(main())
+
+
+def test_double_start_of_one_session_opens_one_upstream_session(settings):
+    async def main():
+        fake = FakeAssemblyAI()
+        server = await websockets.serve(fake.handler, "127.0.0.1", 0)
+        c = _env(settings, server.sockets[0].getsockname()[1])
+        reg = VoiceRegistry(c)
+        sid, _ = c.runtime.create_session()
+        fake.connected.clear()
+        t1 = asyncio.create_task(reg.start(sid))
+        t2 = asyncio.create_task(reg.start(sid))  # a second tab or socket for the same session
+        await asyncio.wait_for(fake.connected.wait(), 5)
+        await fake.expect("session.update")
+        await fake.send(type="session.ready", session_id="sess_fake_1")
+        b1, b2 = await asyncio.gather(t1, t2)
+        assert b1 is b2 and fake.connections == 1
+        await reg.stop(sid)
+        server.close()
+        c.dispose()
+
+    run(main())
+
+
+def test_daily_budget_counts_sessions_that_are_still_live(settings):
+    async def main():
+        fake = FakeAssemblyAI()
+        server = await websockets.serve(fake.handler, "127.0.0.1", 0)
+        c = _env(settings, server.sockets[0].getsockname()[1], voice_daily_budget_seconds=7)  # starts need 5 s of budget left
+        reg = VoiceRegistry(c)
+        a, _ = c.runtime.create_session()
+        b, _ = c.runtime.create_session()
+        events = c.bus.subscribe(a)
+        await _registry_start(reg, fake, a)
+        await asyncio.sleep(8.2)
+        assert a not in reg.bridges  # stopped while live, not only refused at the next start
+        seen = []
+        while not events.empty():
+            seen.append(events.get_nowait())
+        assert any(e["type"] == "ERROR" and e["data"].get("reason") == "voice_daily_budget" for e in seen)
+        with pytest.raises(MirrorError) as e:
+            await reg.start(b)
+        assert e.value.details["reason"] == "voice_daily_budget"
+        server.close()
+        c.dispose()
+
+    run(main())
+
+
 def test_voice_time_cap_stops_and_blocks_restart(settings):
     async def main():
         fake = FakeAssemblyAI()

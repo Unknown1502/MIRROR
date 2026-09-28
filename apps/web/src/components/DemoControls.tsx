@@ -17,6 +17,7 @@ export function DemoControls() {
   const resetDemo = useMirror((s) => s.resetDemo)
   const armFault = useMirror((s) => s.armFault)
   const externalChange = useMirror((s) => s.externalChange)
+  const replaying = useMirror((s) => s.replaying)
 
   useEffect(() => {
     if (!open) return
@@ -38,7 +39,9 @@ export function DemoControls() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="rounded-full border border-rule px-3.5 py-1.5 text-[13px] font-medium text-ink-soft hover:border-ink hover:text-ink"
+        disabled={replaying}
+        title={replaying ? 'Available when the replay ends' : undefined}
+        className="rounded-full border border-rule px-3.5 py-1.5 text-[13px] font-medium text-ink-soft hover:border-ink hover:text-ink disabled:opacity-40 disabled:hover:border-rule"
       >
         Demo controls
         {armed !== 'none' && <span className="ml-2 inline-block h-2 w-2 rounded-full bg-blocked align-middle" title={`Armed: ${armed}`} />}

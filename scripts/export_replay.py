@@ -64,6 +64,8 @@ def main() -> int:
             "tool_calls": [c["name"] for c in t["tool_calls"]],
             "user_audio": None,
             "agent_audio": None,
+            "user_s": None,
+            "agent_s": None,
             "agent_offset_s": t.get("speech_end_to_first_agent_audio_s"),
             "recorded_state": t["state"],
         }
@@ -77,19 +79,26 @@ def main() -> int:
                 name = f"{i:02d}-{kind}.mp3"
                 to_mp3(ffmpeg, run / wav, OUT / name)
                 step[f"{kind}_audio"] = name
-                total += seconds(run / wav)
+                step[f"{kind}_s"] = round(seconds(run / wav), 2)
+                total += step[f"{kind}_s"]
         steps.append(step)
 
     spoken = [t.get("speech") or "" for t in turns if not t["said"].startswith("(")]
-    human = sum(s.startswith("human:") for s in spoken)
-    user_voice = (
-        "a recorded human voice" if spoken and human == len(spoken)
-        else f"a recorded human voice for {human} of {len(spoken)} lines, synthesized speech for the rest" if human
-        else "synthesized speech (Windows SAPI) streamed as microphone audio"
-    )
+    human = sum(x.startswith("human:") for x in spoken)
+    ai = {x.split(":")[1] for x in spoken if x.startswith("assemblyai:")}
+    if spoken and human == len(spoken):
+        user_voice = "a recorded human voice"
+    elif spoken and len(ai) == 1 and all(x.startswith("assemblyai:") for x in spoken):
+        user_voice = f"AssemblyAI's {ai.pop()} voice reading the user's lines (an AI voice, not a person)"
+    elif human:
+        user_voice = f"a recorded human voice for {human} of {len(spoken)} lines, synthesized speech for the rest"
+    elif ai:
+        user_voice = "AssemblyAI voices reading the user's lines (AI voices, not a person)"
+    else:
+        user_voice = "synthesized speech (Windows SAPI) streamed as microphone audio"
     manifest = {
         "recorded_at": datetime.fromtimestamp((run / "report.json").stat().st_mtime, timezone.utc).strftime("%Y-%m-%d"),
-        "agent_voice": "AssemblyAI Voice Agent API (voice: alba)",
+        "agent_voice": f"AssemblyAI Voice Agent API (voice: {report.get('agent_voice', 'alba')})",
         "user_voice": user_voice,
         "checks": f"{report['checks_passed']}/{report['checks_total']}",
         "audio_seconds": round(total, 1),

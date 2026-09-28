@@ -2,7 +2,7 @@
 
 Every claim in the README is backed by one of the runs below. Commands assume the repository root on Windows; on macOS/Linux use `backend/.venv/bin/python`.
 
-## 1. Backend unit and integration tests (106)
+## 1. Backend unit and integration tests (115)
 
 ```bash
 cd backend && .venv/Scripts/python -m pytest -q
@@ -14,12 +14,12 @@ cd backend && .venv/Scripts/python -m pytest -q
 | `test_intent.py` | 12 | candidate generation for "the Pune site", product codes and site numbers not read as quantities, spoken numbers, XR-17 vs XR-17B vs "XR", unknown locations never invented, command classification, commit language (negation, questions, what-ifs), model values cannot resolve ambiguity, model-invented quantity is `INFERRED`, speech-supported values are `EXPLICIT`/`RESOLVED` |
 | `test_transactions.py` | 27 | the full demo sequence with exact numbers and the exact clarification sentence; optimizer; commit without a preview; commit of a blocked future; quantity mismatch; "wait, make that 500" supersedes evidence; "actually I meant Mumbai" forks on role; stale version token; forged token; commit without explicit user evidence; idempotent replay; duplicate commit; six concurrent clicks execute once; world changed after preview; amend after commit; fault divergence never verified (1550/750); rollback after divergence compensates 450 and verifies; rollback of a verified commit, never twice; rollback refuses to overwrite later changes; temporary ERP failure retried idempotently; unknown result resolved by reading reality; duplicate delivery applied once; abort after commit refused; audit chain verifies and detects tampering; history tables append-only; every lifecycle step audited |
 | `test_api.py` | 12 | health; auth required; cross-session isolation; **acceptance test 1** (structured, no voice) through REST; error contract and validation; typed turns + WebSocket event envelope; WebSocket rejects bad and URL tokens; voice without a key reports `ASSEMBLYAI_UNAVAILABLE`; fault divergence and rollback over HTTP; demo reset repeatable 3×; demo controls disabled outside demo mode; the built UI is served with SPA fallback, `HEAD`, replay assets, JSON 404 for unknown API routes and no path traversal |
-| `test_sandbox_watch.py` | 17 | per-visitor sandboxes: isolation of worlds, resets and faults; unsafe session ids rejected; sandbox API requires a session. **Reality watch**: an external change re-simulates an open preview and produces the spoken alert; unrelated changes are ignored; one visitor's commit alerts another visitor's preview in the shared world. Quantity position: "it's been 2 weeks" or "at 3" is not an amount |
-| `test_guardrails.py` | 7 | session-creation rate limit (429 with `Retry-After`); client IP from the proxy's `X-Forwarded-For` entry, not the client's; CSP `frame-ancestors` configurable; voice concurrency cap; voice time cap stops the session; reality alert spoken with `reply.create`, and held until `reply.done` when the agent is mid-reply |
+| `test_sandbox_watch.py` | 23 | per-visitor sandboxes: isolation of worlds, resets and faults; unsafe session ids rejected; sandbox API requires a session. **Reality watch**: an external change re-simulates an open preview and produces the spoken alert; unrelated changes are ignored; one visitor's commit alerts another visitor's preview in the shared world. Quantity position: "it's been 2 weeks" or "at 3" is not an amount, while a spoken list is ("compare 500, 900", as the live transcriber punctuates it); idle event buffers are freed; stale sandbox files are deleted while the server runs |
+| `test_guardrails.py` | 10 | session-creation rate limit (429 with `Retry-After`); client IP from the proxy's `X-Forwarded-For` entry, not the client's; CSP `frame-ancestors` configurable; voice concurrency cap, including **simultaneous starts** from many sessions and a double start of one session (one upstream connection); voice time cap stops the session; the daily voice budget counts sessions that are still live and stops them; reality alert spoken with `reply.create`, and held until `reply.done` when the agent is mid-reply |
 | `test_llm_gateway.py` | 11 | LLM Gateway fallback (gateway mocked): a free-form request becomes a checked preview and the `request_id` is audited; a model-invented number is `INFERRED`; the model cannot commit without the user's words; network errors, prose and unknown actions fall back to help; the gateway is not called when the compiler understands; strict JSON schema for models that support it; output validation and bounds; **429 honoured**: one call, then paused with a message instead of retry storms; "with 900" counts as an amount |
 | `test_voice_protocol.py` | 9 | against a local fake of the AssemblyAI WebSocket: **acceptance test 2** (voice flow) and **acceptance test 5** (barge-in discards a pending commit, new version invalidates the old authorization); model cannot commit without the user saying commit; model-invented quantity requires confirmation; `session.resume` accepted; resume refused leads to one fresh session, no second greeting, context restored; a tool call from a dropped reply never runs; upstream item ids do not collide across sessions; model-swapped roles are not evidence; a correction sent through `propose_transfer` still forks on role |
 
-Last run: 106 passed.
+Last run: 115 passed.
 
 ## 2. Browser end-to-end, typed path
 
@@ -28,9 +28,10 @@ Real Chrome driven by Playwright against a running stack. Fails on any page or c
 ```bash
 backend/.venv/Scripts/python scripts/e2e_browser.py --url http://127.0.0.1:8000   # production build served by the backend
 backend/.venv/Scripts/python scripts/e2e_browser.py --url http://127.0.0.1:5173   # Vite dev server
+backend/.venv/Scripts/python scripts/e2e_browser.py --url http://127.0.0.1:8000 --browser firefox   # or webkit
 ```
 
-Checks: fork with both futures and the clarification sentence; preview after "Site 2"; what-if 900 blocked with no commit button; compare; commit verified; Demo controls → reset → arm short shipment through the UI → commit → "Reality diverged", reality table shows 1550/750; rollback → "Reality restored", table back to 2000/300; hash chain intact. Last run: PASS on both URLs.
+Checks: fork with both futures and the clarification sentence; preview after "Site 2"; what-if 900 blocked with no commit button; compare; commit verified; Demo controls → reset → arm short shipment through the UI → commit → "Reality diverged", reality table shows 1550/750; rollback → "Reality restored", table back to 2000/300; hash chain intact. Last run: PASS on both URLs, and in Chromium, Firefox and WebKit (Safari's engine).
 
 ## 2b. Landing page and judge replay
 
@@ -38,7 +39,7 @@ Checks: fork with both futures and the clarification sentence; preview after "Si
 backend/.venv/Scripts/python scripts/e2e_replay.py --url http://127.0.0.1:8000 --sandbox
 ```
 
-Checks the landing page (desktop and 390 px phone width, no sideways scroll), then plays the recorded replay at 1.5× and asserts the backend-recomputed screen at every beat: fork with "Over capacity by 400", preview, what-if 900 blocked, comparison, the "Reality changed under your preview" alert with "2000 to 1700", divergence at Mumbai 1250, restoration at 1700. With `--sandbox`, a second visitor opened afterwards must still see Mumbai 2000 / Pune Site 2 300. Last runs: PASS against the Vite dev server, the local production build, and the Docker image built from the exact Hugging Face Space file set.
+Checks the landing page (desktop and 390 px phone width, no sideways scroll), then plays the recorded replay at 1.5× and asserts the backend-recomputed screen at every beat: fork with "Over capacity by 400", preview, what-if 900 blocked, comparison, the "Reality changed under your preview" alert with "2000 to 1700", divergence at Mumbai 1250, restoration at 1700. With `--sandbox`, a second visitor opened afterwards must still see Mumbai 2000 / Pune Site 2 300. It also checks that the command box is locked while the replay runs and unlocked after. Last runs: PASS in Chromium, Firefox and WebKit against the production build, and against the Docker image built from the exact Hugging Face Space file set.
 
 ## 3. Browser end-to-end, voice path
 
@@ -87,7 +88,7 @@ Last full run (2026-09-26): **53/53 checks**, 39 spoken turns, 31 tool calls, le
 
 After the reality watch was added, the honesty and adversarial sections were re-run live: **28/28** ([live-results-reality-watch.json](live-results-reality-watch.json)). With nobody speaking, another system shipped 300 out of Mumbai; MIRROR re-simulated the open preview and the agent said, unprompted: "Heads up: reality changed under your preview. Mumbai Distribution Center XR-17 went from 2000 to 1700 (another team shipped 300). I re-simulated it…". "Commit 500" then executed against the new world and verified at 1200.
 
-The `judge` section is the landing-page replay, recorded as one continuous live session: **8/8** ([live-results-judge.json](live-results-judge.json)). `scripts/export_replay.py` turns it into `apps/web/public/replay`. Human recordings can replace the synthesized speech in every section: see [human-voice.md](human-voice.md).
+The `judge` section is the landing-page replay, recorded as one continuous live session: **8/8** ([live-results-judge.json](live-results-judge.json)). The user's lines in it are spoken by AssemblyAI's `george` voice (`scripts/ai_voice_lines.py`, labelled as an AI voice everywhere) and the agent answers as `anna`; AssemblyAI transcribed them and the agent called the tools live. `scripts/export_replay.py` turns it into `apps/web/public/replay`. Human recordings can replace the synthesized speech in every section: see [human-voice.md](human-voice.md).
 
 | Section | What was verified live |
 | --- | --- |

@@ -113,7 +113,7 @@ def main() -> int:
         "VOICE_MAX_SESSION_SECONDS": str(a.voice_session_seconds),
         "VOICE_MAX_CONCURRENT": str(a.voice_concurrent),
         "VOICE_DAILY_BUDGET_SECONDS": str(a.voice_daily_minutes * 60),
-        "ASSEMBLYAI_VOICE": env.get("ASSEMBLYAI_VOICE", "alba"),
+        "ASSEMBLYAI_VOICE": env.get("ASSEMBLYAI_VOICE", "anna"),
         "LLM_GATEWAY_ENABLED": env.get("LLM_GATEWAY_ENABLED", "true"),
         "LLM_GATEWAY_MODEL": env.get("LLM_GATEWAY_MODEL", "qwen3.5-4b-32k-fast"),
         "MIRROR_CORS_ORIGINS": "",

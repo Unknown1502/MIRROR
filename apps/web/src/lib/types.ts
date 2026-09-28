@@ -261,6 +261,8 @@ export interface ReplayStep {
   user_audio: string | null
   agent_audio: string | null
   agent_offset_s: number | null
+  user_s?: number | null
+  agent_s?: number | null
   arm_fault?: string
   external_change?: { location_id: string; product_id: string; delta: number; note: string }
   recorded_state: string | null

@@ -42,6 +42,23 @@ Lines without a recording fall back to the synthesized voice. Each turn in `repo
 source (`"speech": "human:site-2.m4a"` or `"sapi:Microsoft Zira Desktop"`), and the run prints how many
 turns were human. The replay's footer names the user voice as a recorded human voice when it was one.
 
+## Without a person: a natural AI voice
+
+The replay currently uses AssemblyAI's own `george` voice for the user's lines instead of the robotic Windows voice:
+
+```bash
+python scripts/ai_voice_lines.py --samples anna,alba,jane,vera,george,michael,charles,paul   # hear the options in voice-samples/
+python scripts/ai_voice_lines.py --voice george                                              # the judge lines -> recordings/ai-george/
+python scripts/live_voice_test.py --recordings recordings/ai-george --only judge --out live-judge
+python scripts/export_replay.py live-judge
+```
+
+Each clip is kept only if the agent's transcript matches the line word for word. The folder's `SPEAKER.txt` makes every report and the replay footer say it is an AI voice, not a person. The agent's own voice is `ASSEMBLYAI_VOICE` in `.env` (now `anna`).
+
+## Recording yourself, quickly
+
+`python scripts/record_lines.py --who <name>` shows each judge line, records it from your microphone, plays it back, and saves it where `--recordings recordings/<name>` expects (`--all` for every section). Requires `pip install sounddevice`.
+
 ## What to look at
 
 - `heard`: AssemblyAI's transcript of the speaker. Numbers and "XR-17" should survive accents.
