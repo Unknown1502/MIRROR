@@ -48,7 +48,7 @@
 @layer components {
   /* Expanded Archivo carries the numbers: the part of the screen people read first. */
   .num {
-    font-variation-settings: "wdth" 125;
+    font-stretch: 125%; /* selects the expanded Archivo face loaded in index.html */
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
   }
@@ -71,6 +71,15 @@
     );
     border: 1.5px dashed color-mix(in srgb, var(--color-shadow) 55%, transparent);
   }
+  /* Side by side on wide screens; stacked on a phone, where the big numbers need the full width. */
+  .futures-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 720px) {
+    .futures-grid {
+      grid-template-columns: var(--futures-cols);
+    }
+  }
   .real-pane {
     background: var(--color-glass);
     border: 1.5px solid var(--color-ink);
@@ -78,7 +87,7 @@
   /* Landing: expanded, heavy Archivo, set tight. */
   .landing-title {
     font-weight: 800;
-    font-variation-settings: "wdth" 118;
+    font-stretch: 125%;
     letter-spacing: -0.025em;
   }
   /* The mirror line: what was said sits above it, what it could do is reflected below. */

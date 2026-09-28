@@ -180,6 +180,8 @@ class TurnDispatcher:
         if interp is not None and interp.enabled and interp.last_outcome == "rate_limited":
             return (HELP + " Free-form understanding (AssemblyAI LLM Gateway) is paused for about "
                     f"{max(1, round(interp.rate_limited_for()))} s by this account's rate limit; standard phrasings always work.")
+        if interp is not None and interp.enabled and interp.last_outcome == "unreachable":
+            return HELP + " Free-form understanding (AssemblyAI LLM Gateway) is unreachable right now; standard phrasings always work."
         return HELP
 
     def _llm_fallback(self, session_id, cmd: Command, utt: Utterance, txn_id, context_version) -> TurnResult | None:

@@ -68,7 +68,16 @@ def test_model_cannot_commit_without_the_users_words(container, session, with_ll
 def test_gateway_failures_fall_back_to_the_deterministic_path(container, session, with_llm, response):
     with_llm(response)
     r = container.dispatcher.handle(session, "blorp the flux capacitor")
-    assert r.reply == HELP and r.interpreted_by is None
+    assert r.reply.startswith(HELP) and r.interpreted_by is None
+
+
+def test_unreachable_gateway_is_skipped_for_a_while_and_said(container, session, with_llm):
+    calls = with_llm(OSError("TLS handshake timed out"))
+    r1 = container.dispatcher.handle(session, "blorp the flux capacitor")
+    r2 = container.dispatcher.handle(session, "blorp it again")
+    assert len(calls) == 1  # no second 10-second wait while the network is down
+    assert "unreachable" in r1.reply and "unreachable" in r2.reply
+    assert "rate limit" not in r2.reply
 
 
 def test_llm_is_not_called_when_the_compiler_understands(container, session, with_llm):

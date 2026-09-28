@@ -48,7 +48,7 @@ export function IntentStrip() {
           </>
         )}
       </div>
-      <div className="flex-[2]">
+      <div className="min-w-[260px] flex-[2]">
         <p className="label">
           Interpreted{drafts.length > 1 ? `, ${drafts.length} readings of which field changed` : ''}
         </p>

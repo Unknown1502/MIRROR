@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { KIND_WORD, OUTCOME_COLOR, OUTCOME_WORD, currentVersion, locationName, primaryReason, shortHash } from '../lib/format'
 import type { Branch, Comparison, Version, World } from '../lib/types'
 import { useMirror } from '../store'
@@ -39,15 +40,17 @@ export function Futures() {
       {ver && ver.branches.length > 0 && (
         <div
           key={`${txn!.id}-${ver.version}`}
-          className="mt-4 grid gap-4"
-          style={{
-            gridTemplateColumns:
-              ver.branches.length === 1
-                ? showCompare
-                  ? 'minmax(0, 1fr) minmax(0, 1fr)'
-                  : 'minmax(0, 620px)'
-                : `repeat(${Math.min(ver.branches.length, 3)}, minmax(0, 1fr))`,
-          }}
+          className="futures-grid mt-4 grid gap-4"
+          style={
+            {
+              '--futures-cols':
+                ver.branches.length === 1
+                  ? showCompare
+                    ? 'minmax(0, 1fr) minmax(0, 1fr)'
+                    : 'minmax(0, 620px)'
+                  : `repeat(${Math.min(ver.branches.length, 3)}, minmax(0, 1fr))`,
+            } as CSSProperties
+          }
         >
           {ver.branches.map((b) => (
             <FutureCard

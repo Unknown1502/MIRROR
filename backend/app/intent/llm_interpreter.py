@@ -24,6 +24,7 @@ from ..core.config import Settings
 
 log = logging.getLogger("mirror.llm")
 
+UNREACHABLE_BACKOFF_S = 30.0
 ACTIONS = ("propose", "what_if", "amend", "clarify", "compare", "optimize", "commit", "rollback", "cancel", "query", "other")
 # Models whose catalog entry lists `response_format` (verified against the live LLM Gateway catalog, 2026-09-26).
 STRUCTURED_OUTPUT_MODELS = {
@@ -141,7 +142,8 @@ class LLMInterpreter:
         self.settings = settings
         self._post = post or self._http_post
         self._blocked_until = 0.0
-        self.last_outcome: str | None = None  # "ok" | "rate_limited" | "error" | "unusable" | "disabled"
+        self._down_until = 0.0  # after a network failure, skip the gateway briefly instead of waiting on it per turn
+        self.last_outcome: str | None = None  # "ok" | "rate_limited" | "unreachable" | "error" | "unusable" | "disabled"
 
     def rate_limited_for(self) -> float:
         return max(0.0, self._blocked_until - time.monotonic())
@@ -185,6 +187,9 @@ class LLMInterpreter:
         if self.rate_limited_for() > 0:
             self.last_outcome = "rate_limited"
             return None
+        if time.monotonic() < self._down_until:
+            self.last_outcome = "unreachable"
+            return None
         body = {
             "model": self.model,
             "messages": [
@@ -210,7 +215,8 @@ class LLMInterpreter:
             log.warning("LLM Gateway HTTP %s", exc.code)
             return None
         except Exception as exc:  # noqa: BLE001 - network or timeout: fall back to the deterministic path
-            self.last_outcome = "error"
+            self.last_outcome = "unreachable"
+            self._down_until = time.monotonic() + UNREACHABLE_BACKOFF_S
             log.warning("LLM Gateway unavailable: %s", exc)
             return None
         latency = (time.perf_counter() - started) * 1000

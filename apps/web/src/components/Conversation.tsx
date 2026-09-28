@@ -27,7 +27,12 @@ export function Conversation() {
 
   const submit = (value: string) => {
     if (!value.trim() || busy) return
-    void sendText(value)
+    void sendText(value).then(() => {
+      // On a phone the futures sit above this box: bring the result into view.
+      if (window.matchMedia('(max-width: 1023px)').matches) {
+        document.getElementById('mirror-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
     setText('')
   }
 

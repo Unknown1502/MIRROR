@@ -16,7 +16,7 @@ If a take goes wrong, keep going: MIRROR's recovery is part of the story. Fallba
 | 1:55–2:15 | Demo controls → **Short shipment**. Say commit. Red "Reality diverged" | **"Commit 500."** Voice-over: "I rigged the ERP to report success but move only 450. MIRROR reads the whole world back and refuses to call it verified." |
 | 2:15–2:30 | "Reality restored: Yes" | **"Roll back."** Voice-over: "The rollback is computed from what actually happened, then verified again." |
 | 2:30–2:50 | Audit panel: **Verify hash chain** → Intact; then briefly the Transaction versions list | "Every step is in a hash-chained ledger. Under the hood the Voice Agent API's tool calls are only proposals. They're held until the reply finishes, and dropped if I interrupt. Every value is checked against my own transcript." |
-| 2:50–3:05 | README evidence table, or the start page | "115 tests, and live runs against AssemblyAI's real service. On 26 scenarios a naive agent took 9 unsafe actions; MIRROR took none. Try it yourself: link below." |
+| 2:50–3:05 | README evidence table, or the start page | "116 tests, and live runs against AssemblyAI's real service. On 26 scenarios a naive agent took 9 unsafe actions; MIRROR took none. Try it yourself: link below." |
 
 ## Lines to say to the agent, in order
 

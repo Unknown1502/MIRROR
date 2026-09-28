@@ -100,7 +100,8 @@ The full timed script, optional beats and stage recovery steps are in [docs/demo
 
 | Check | Result |
 | --- | --- |
-| Backend tests (`cd backend && .venv/Scripts/python -m pytest -q`) | 115 passed |
+| Backend tests (`cd backend && .venv/Scripts/python -m pytest -q`) | 116 passed |
+| Adversarial run against a live server (`scripts/fuzz_api.py`): 69 hostile turns, 21 malformed or unauthorized calls, 12 racing commits | no 500s, no unrequested ERP change, one execution |
 | Browser E2E, typed path, in Chromium, Firefox and WebKit (Safari's engine) | PASS |
 | Browser E2E, start page + replay + second-visitor isolation, in Chromium, Firefox and WebKit, and against the Docker image | PASS |
 | **Live AssemblyAI** suite: 39 spoken turns, 31 real tool calls (`scripts/live_voice_test.py`) | **53/53 PASS** |
@@ -109,7 +110,7 @@ The full timed script, optional beats and stage recovery steps are in [docs/demo
 | **Live LLM Gateway**: six free-form phrasings | **6/6 PASS** |
 | **Live browser**: start page → Talk to it, WAV-fed mic, real AssemblyAI, spoken commit changes the ERP | **13/13 PASS** |
 | Browser E2E, voice path against a protocol stand-in | 8/8 checks PASS |
-| Smoke test against a running server | 12/12 PASS; commit + execution + full verification in 44 ms |
+| Smoke test against a running server | 11/11 PASS; commit + execution + full verification in about 60 ms |
 | Benchmark, 26 scenarios vs a naive voice→action agent | final state correct 26 vs 10; unsafe actions 0 vs 9; wrong interpretations executed 0 vs 6 |
 
 Details: [docs/testing.md](docs/testing.md), [docs/benchmark.md](docs/benchmark.md). What is live, mocked or unverified: [docs/status.md](docs/status.md), including the defects live testing found and how they were fixed. Median latency from the end of the user's speech to the agent's first audio is 3.3 s when a tool runs and 1.9 s when none does.

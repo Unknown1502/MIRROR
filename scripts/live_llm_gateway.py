@@ -64,6 +64,9 @@ def main() -> int:
         print(f"      model  : {llm.get('model', 'deterministic compiler')} action={llm.get('action')} "
               f"{llm.get('latency_ms', '')}{' ms' if llm else ''} request_id={llm.get('request_id')}")
         print(f"      reply  : {r.reply[:160]}")
+        interp = c.dispatcher.interpreter
+        if not llm and interp is not None and interp.last_outcome not in (None, "ok"):
+            print(f"      gateway: {interp.last_outcome}")
     print(f"LLM GATEWAY LIVE: {passed}/{len(STEPS)}")
     c.dispose()
     return 0 if passed == len(STEPS) else 1

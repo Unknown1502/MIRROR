@@ -116,7 +116,13 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
     const behavior = (): ScrollBehavior => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
     const reveal = (label: string) => document.querySelector(`[aria-label="${label}"]`)?.scrollIntoView({ behavior: behavior(), block: 'start' })
     // The top of the centre column holds the reality alert, then the intent and the futures.
-    const revealTop = () => document.querySelector('[aria-label="Possible futures"]')?.closest('.overflow-y-auto')?.scrollTo({ top: 0, behavior: behavior() })
+    // On desktop the centre column scrolls on its own; on a phone the page does.
+    const revealTop = () => {
+      const col = document.getElementById('mirror-center')
+      if (!col) return
+      if (getComputedStyle(col).overflowY === 'auto') col.scrollTo({ top: 0, behavior: behavior() })
+      else col.scrollIntoView({ behavior: behavior(), block: 'start' })
+    }
 
     const doStep = async (s: ReplayStep) => {
       const st = store()
@@ -131,6 +137,7 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
         await Promise.all([store().replayTurn(s.heard ?? s.said), wait(900)])
         const txn = store().txn
         if (txn && txn.committed_version !== null) reveal('Real world')
+        else if (window.matchMedia('(max-width: 1023px)').matches) reveal('Possible futures')  // phone: the futures, not the intent strip
         else revealTop()
       } else {
         setPhase('world')
@@ -236,11 +243,11 @@ export function ReplayBar({ onExit }: { onExit: () => void }) {
             watched.
           </p>
         ) : (
-          <p className="mt-2 min-h-[2.6em] text-[15px] leading-snug text-ink">{CAPTIONS[step] ?? ''}</p>
+          <p className="mt-2 text-[14px] leading-snug text-ink sm:min-h-[2.6em] sm:text-[15px]">{CAPTIONS[step] ?? ''}</p>
         )}
 
         {s && !done && !error && (
-          <p className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-[12px] text-ink-soft">
+          <p className="mt-1.5 hidden flex-wrap gap-x-4 gap-y-0.5 text-[12px] text-ink-soft sm:flex">
             {s.kind === 'turn' ? (
               <span>
                 AssemblyAI heard <span className="font-semibold text-ink">“{s.heard}”</span>

@@ -32,7 +32,7 @@ export default function App() {
   if (screen === 'landing') return <Landing onWatch={watch} />
 
   return (
-    <div className={`flex h-full min-h-0 flex-col ${replay ? 'pb-72 sm:pb-56' : ''}`}>
+    <div className={`flex min-h-full flex-col lg:h-full lg:min-h-0 ${replay ? 'pb-72 sm:pb-56' : ''}`}>
       <Header onReplay={watch} />
       {bootError && (
         <div className="border-b border-blocked bg-blocked-soft px-5 py-2 text-[13px] text-blocked" role="alert">
@@ -42,12 +42,12 @@ export default function App() {
           </button>
         </div>
       )}
-      <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)_320px]">
-        <aside className="order-2 flex min-h-105 flex-col border-rule bg-glass/60 lg:order-0 lg:min-h-0 lg:border-r">
+      <main className="grid flex-1 grid-cols-1 lg:min-h-0 lg:grid-cols-[300px_minmax(0,1fr)_320px]">
+        <aside className="order-2 flex h-105 flex-col border-y border-rule bg-glass/60 lg:order-0 lg:h-auto lg:min-h-0 lg:border-y-0 lg:border-r">
           <Conversation />
         </aside>
 
-        <div className="order-1 flex min-h-0 flex-col gap-3 overflow-y-auto px-4 py-4 lg:order-0 lg:px-6">
+        <div id="mirror-center" className="order-1 flex flex-col gap-3 px-4 py-4 lg:order-0 lg:min-h-0 lg:overflow-y-auto lg:px-6">
           <div className="shrink-0">
             <RealityBanner />
           </div>
@@ -65,7 +65,7 @@ export default function App() {
           </div>
         </div>
 
-        <aside className="order-3 min-h-0 overflow-y-auto border-rule bg-glass/60 lg:border-l">
+        <aside className="order-3 border-rule bg-glass/60 lg:min-h-0 lg:overflow-y-auto lg:border-l">
           <TransactionPanel />
           <AuditTimeline />
           <MetricsPanel />

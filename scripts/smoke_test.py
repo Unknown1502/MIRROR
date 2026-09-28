@@ -34,7 +34,11 @@ class Client:
             return json.loads(e.read())
 
 
+PASSED = []
+
+
 def check(label: str, ok: bool, detail: str = "") -> None:
+    PASSED.append(label) if ok else None
     print(f"{'PASS' if ok else 'FAIL'}  {label}{('  ' + detail) if detail else ''}")
     if not ok:
         raise SystemExit(1)
@@ -89,6 +93,7 @@ def main() -> int:
 
     chain = c.call("GET", "/audit/verify")
     check("audit hash chain intact", chain["valid"], f"{chain['length']} events")
+    print(f"SMOKE: {len(PASSED)}/{len(PASSED)} checks passed")  # a failed check exits 1 immediately
     return 0
 
 

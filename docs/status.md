@@ -93,6 +93,10 @@ Status as of 2026-09-26 (updated after the public-demo work). Categories: **LIVE
 - **Typed commands crashed in a browser without Web Audio** (found with WebKit): audio is now optional, and voice explains why it cannot start.
 - **The replay could stall forever** where a browser never reports the end of a clip; each clip now has a time limit from its recorded length.
 - **"Compare 500, 900."** (how the live transcriber punctuated "compare 500 and 900") was not read as a comparison by the typed path; spoken lists now count as amounts when the first number does.
+- **WebKit drew the expanded headline and numbers with gaps between letters**: it laid out the variable font's width axis but drew normal-width glyphs. The wide style is now loaded as static font files, one per weight; WebKit, Firefox and Chrome render it identically.
+- **On a phone the futures were squeezed into a strip about 240 px tall**, two future cards overlapped, and the replay bar ran off the screen. Phones now get one scrolling page with the futures first and stacked, the conversation in its own box, a compact replay bar, and the page follows each result.
+- **A flaky network made every free-form typed turn wait up to 10 s** for the LLM Gateway and then answer with generic help. After a network failure the gateway is skipped for 30 s and the reply says it is unreachable.
+- The docs claimed 12 smoke checks; the script has 11. Corrected, and the script now prints a summary.
 
 ## Known limitations
 

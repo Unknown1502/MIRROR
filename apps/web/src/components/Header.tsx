@@ -49,7 +49,9 @@ export function Header({ onReplay }: { onReplay: () => void }) {
           <span
             className={`inline-block h-2 w-2 rounded-full ${socketStatus === 'open' ? 'bg-valid' : socketStatus === 'connecting' ? 'bg-warn' : 'bg-blocked'}`}
           />
-          {socketStatus === 'open' ? 'Runtime connected' : socketStatus === 'connecting' ? 'Connecting' : 'Runtime offline'}
+          <span className="hidden sm:inline">
+            {socketStatus === 'open' ? 'Runtime connected' : socketStatus === 'connecting' ? 'Connecting' : 'Runtime offline'}
+          </span>
         </span>
 
         <button
