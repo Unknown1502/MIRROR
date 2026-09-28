@@ -31,11 +31,21 @@ Try it: watch a replay of a live session, talk to it, or type. Every visitor get
 
 (1,788 characters, 308 words.)
 
-## Technologies
+## Technologies Used (lablab's list, checked 28 Sep 2026)
 
-"Categories" and "Technologies Used" are picked from lablab's own lists. Technologies: choose AssemblyAI first, then any of these that the list offers. Categories: pick the closest to voice AI, AI agents, and business or productivity.
+AssemblyAI is not in the visible list: type "Assembly" in the dropdown's search box first; if it is still
+missing, ask in the hackathon's Discord to have it added. From the list as it stands, only these are true for MIRROR:
 
-AssemblyAI Voice Agent API, AssemblyAI LLM Gateway, FastAPI, Python, SQLite (SQLAlchemy), WebSockets, React, TypeScript, Vite, Tailwind CSS, Zustand, Web Audio (AudioWorklet), Playwright, Docker, Hugging Face Spaces
+1. HuggingFace Spaces (where the demo is hosted)
+2. Qwen3 (closest match to qwen3.5-4b-32k-fast, used through AssemblyAI's LLM Gateway)
+3. rest api (MIRROR's documented REST API)
+4. Claude Code (optional: the AI assistant that helped build it; honest disclosure, not part of the product)
+
+Not these: Whisper, Speechmatics, ElevenLabs, OpenAI, Streamlit, Vercel, Replit (not used).
+
+Full stack, for the README and the video: AssemblyAI Voice Agent API, AssemblyAI LLM Gateway, FastAPI, Python,
+SQLite (SQLAlchemy), WebSockets, React, TypeScript, Vite, Tailwind CSS, Zustand, Web Audio (AudioWorklet),
+Playwright, Docker, Hugging Face Spaces.
 
 ## Tags
 
