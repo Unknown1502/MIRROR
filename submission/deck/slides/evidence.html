@@ -1,0 +1,28 @@
+<section id="evidence" data-transition="fade" style="background:#E6E9EC; color:#1A2330; font-family:'Archivo', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:48px">
+<h2 style="font-size:72px; font-weight:700; line-height:1.1; color:#1A2330">Measured, not claimed</h2>
+<div style="display:flex; gap:24px">
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#F6F8F9; padding:32px; border-radius:16px">
+<p style="font-size:72px; font-weight:800; line-height:1.1; color:#1A2330">116</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5566">backend tests, including adversarial ones</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#F6F8F9; padding:32px; border-radius:16px">
+<p style="font-size:72px; font-weight:800; line-height:1.1; color:#1A2330">53/53</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5566">live AssemblyAI checks, 39 spoken turns</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#F6F8F9; padding:32px; border-radius:16px">
+<p style="font-size:72px; font-weight:800; line-height:1.1; color:#1A2330">28/28</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5566">live, with the spoken reality alert</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#F6F8F9; padding:32px; border-radius:16px">
+<p style="font-size:72px; font-weight:800; line-height:1.1; color:#1A2330">13/13</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5566">real browser, microphone path, live</p>
+</div>
+</div>
+<table style="font-family:'Archivo', Arial, sans-serif; font-size:32px; color:#1A2330">
+<tr style="background:#F6F8F9"><th style="width:52%; text-align:left">26 scenarios</th><th style="width:24%; text-align:right">Naive voice agent</th><th style="width:24%; text-align:right">MIRROR</th></tr>
+<tr><td>Correct final state</td><td style="text-align:right">10</td><td style="text-align:right; color:#1D7A52">26</td></tr>
+<tr><td>Unsafe actions taken</td><td style="text-align:right; color:#B3261E">9</td><td style="text-align:right">0</td></tr>
+<tr><td>Wrong interpretations executed</td><td style="text-align:right; color:#B3261E">6</td><td style="text-align:right">0</td></tr>
+</table>
+<aside>Everything here was run, and the reports are in the repository. The live suites use AssemblyAI's real service. The benchmark compares MIRROR with a naive agent that executes whatever the model proposes, on the same 26 scenarios. Median time from the end of speech to the agent's first audio was 3.3 seconds with a tool call, 1.9 without.</aside>
+</section>

@@ -24,7 +24,7 @@ Sources: the [event page](https://lablab.ai/ai-hackathons/assemblyai-voice-agent
 | Categories, Technologies Used | picked from lablab's lists | AssemblyAI first, then the closest matches from [descriptions.md](descriptions.md) | Pick in the form |
 | Cover image | PNG or JPG, 16:9 | [cover.png](cover.png), 1920×1080 PNG, 139 KB | Ready |
 | Video presentation | MP4, at most 5 minutes, under 300 MB; intro, then slides, then the product | [video-script.md](video-script.md), 4:45 | **Record it** |
-| Slide presentation | PDF | Slides artifact "MIRROR pitch deck", 15 slides with speaker notes: open it, fill in `[DEMO_URL]` and `[REPO_URL]` on the last slide, then Share › Export › PDF | Export it |
+| Slide presentation | PDF | [MIRROR-deck.pdf](MIRROR-deck.pdf), 15 pages, demo link https://prajwalsutar899-mirror.hf.space; rebuild with `python scripts/export_deck_pdf.py --demo-url <url>` if you deploy under another name | Ready |
 | Public GitHub repository | public (a private repo lowers the score) | local repo, commits ready on `main`, MIT licence | **Push it** |
 | Demo application platform | the guide suggests Streamlit, Replit or Vercel | Hugging Face Spaces (Docker). MIRROR needs a long-running server with WebSockets for live voice, which Vercel's serverless functions and Streamlit do not provide; pick "Other" or the closest option if the form asks | Deploy it |
 | Application URL | a link judges can interact with | `https://<hf-user>-mirror.hf.space` after deploying | **Deploy it** |

@@ -1,0 +1,24 @@
+<section id="assemblyai" data-transition="fade" style="background:#E6E9EC; color:#1A2330; font-family:'Archivo', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:48px">
+<h2 style="font-size:72px; font-weight:700; line-height:1.1; color:#1A2330">How we use AssemblyAI</h2>
+<div style="display:flex; gap:32px">
+<div style="flex:3; display:flex; flex-direction:column; gap:20px; background:#F6F8F9; padding:40px; border-radius:16px">
+<h3 style="font-size:44px; font-weight:700; color:#1A2330">Voice Agent API</h3>
+<ul style="font-size:28px; line-height:1.4; color:#4A5566">
+<li>Recognition, turn detection, barge-in, tool calling and speech over one WebSocket, relayed by our server so the key never reaches the browser</li>
+<li>Every tool.call is a proposal: held until reply.done, dropped if the user interrupts</li>
+<li>Tools follow state: commit exists only while a valid preview does</li>
+<li>Keyterms narrow to the options being asked about</li>
+<li>reply.create lets the agent announce reality changes unprompted</li>
+</ul>
+</div>
+<div style="flex:2; display:flex; flex-direction:column; gap:20px; background:#F6F8F9; padding:40px; border-radius:16px">
+<h3 style="font-size:44px; font-weight:700; color:#1A2330">LLM Gateway</h3>
+<ul style="font-size:28px; line-height:1.4; color:#4A5566">
+<li>Reads typed phrasing the rule-based parser can’t</li>
+<li>Its JSON goes through the same tools and the same evidence gate</li>
+<li>Live: “yep sounds right to me” came back as commit. The backend refused.</li>
+</ul>
+</div>
+</div>
+<aside>AssemblyAI does the conversation: recognition, turn-taking, barge-in, tool calls and the voice. MIRROR decides what the tool calls are allowed to do. Calls wait for the reply to finish and vanish if you interrupt, so an interrupted commit cannot run. The tool list changes with the transaction state. The LLM Gateway handles free-form typing, and the live test shows why the gate matters: the model read agreement as a commit, and the backend refused it.</aside>
+</section>

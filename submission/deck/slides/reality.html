@@ -1,0 +1,21 @@
+<section id="reality" data-transition="fade" style="background:#E6E9EC; color:#1A2330; font-family:'Archivo', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:48px">
+<h2 style="font-size:72px; font-weight:700; line-height:1.1; color:#1A2330">When reality disagrees, MIRROR says so</h2>
+<div style="display:flex; gap:32px">
+<div style="flex:1; display:flex; flex-direction:column; gap:20px; background:#F6F8F9; border:3px solid #B3261E; border-radius:16px; padding:40px">
+<h3 style="font-size:44px; font-weight:700; color:#B3261E">Reality diverged</h3>
+<p style="font-size:28px; line-height:1.4; color:#4A5566">The ERP reported success but short-shipped: it moved 450, not 500.</p>
+<table style="font-family:'Archivo', Arial, sans-serif; font-size:28px; color:#1A2330">
+<tr><th style="width:44%; text-align:left">Cell</th><th style="width:28%; text-align:right">Expected</th><th style="width:28%; text-align:right">Actual</th></tr>
+<tr><td style="text-align:left">Mumbai</td><td style="text-align:right">1200</td><td style="text-align:right; color:#B3261E">1250</td></tr>
+<tr><td style="text-align:left">Pune Site 2</td><td style="text-align:right">800</td><td style="text-align:right; color:#B3261E">750</td></tr>
+</table>
+<p style="font-size:28px; line-height:1.4; color:#4A5566">Never marked verified. The rollback is computed from what actually happened, then verified again.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:20px; background:#F6F8F9; border:3px solid #A86200; border-radius:16px; padding:40px">
+<h3 style="font-size:44px; font-weight:700; color:#A86200">Reality changed under you</h3>
+<p style="font-size:28px; line-height:1.4; color:#4A5566">Another team shipped 300 out of Mumbai while a preview was open. MIRROR re-simulated it, revoked the old commit token, and the agent spoke up without being asked:</p>
+<p style="font-size:28px; font-style:italic; line-height:1.4; color:#1A2330; border-left:4px solid #A86200; padding:0px 0px 0px 20px">“Heads up: reality changed under your preview. Mumbai XR-17 went from 2000 to 1700. I re-simulated it.”</p>
+</div>
+</div>
+<aside>Two ways reality can disagree with the plan. Left: the ERP lies, reporting success on a short shipment. MIRROR reads everything back, marks it diverged, never verified, and rolls back from the actual state. Right: the world moves while you are still deciding. MIRROR re-simulates the open preview, kills the old commit token, and the voice agent tells you through reply.create. Both were run live against AssemblyAI.</aside>
+</section>

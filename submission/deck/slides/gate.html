@@ -1,0 +1,13 @@
+<section id="gate" data-transition="fade" style="background:#F6F8F9; color:#1A2330; font-family:'Archivo', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:48px">
+<h2 style="font-size:72px; font-weight:700; line-height:1.1; color:#1A2330">The model proposes. The backend decides.</h2>
+<table style="font-family:'Archivo', Arial, sans-serif; font-size:28px; color:#1A2330">
+<tr style="background:#E6E9EC"><th style="width:48%; text-align:left">If the model tries to…</th><th style="width:52%; text-align:left">MIRROR</th></tr>
+<tr><td>pick Site 1 when you said “the Pune site”</td><td>keeps both futures simulated and asks you</td></tr>
+<tr><td>invent a quantity you never said</td><td>marks it inferred; it needs your confirmation</td></tr>
+<tr><td>commit because you said “sounds good”</td><td>refuses: commit needs your own word</td></tr>
+<tr><td>commit a version you did not see</td><td>rejects the token, which is bound to one version</td></tr>
+<tr><td>run a tool call you talked over</td><td>drops it before it reaches the runtime</td></tr>
+<tr><td>say “done” when it is not</td><td>shows the ERP as read back after the write</td></tr>
+</table>
+<aside>This is the safety model in one table. Every value the model passes is checked against the user's own transcript, so the model is a pointer, never the authority. Each row is a unit test, and the first three were also observed and handled live against AssemblyAI's service.</aside>
+</section>

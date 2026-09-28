@@ -1,0 +1,17 @@
+{
+  "v": 4,
+  "createdOnFiles": {"v": 1, "at": "2026-09-26T11:30:00Z"},
+  "title": "MIRROR pitch deck",
+  "order": ["cover", "problem", "fork", "loop", "reality", "console", "assemblyai", "gate", "evidence", "value", "market", "business", "competition", "roadmap", "try"],
+  "sections": {
+    "s1": {"description": "Why voice agents need a shadow world before they touch a system of record", "start": "cover"},
+    "s2": {"description": "How MIRROR forks, simulates, commits and verifies", "start": "fork"},
+    "s3": {"description": "Built on AssemblyAI, safe by construction", "start": "assemblyai"},
+    "s4": {"description": "What we measured and why it matters", "start": "evidence"},
+    "s5": {"description": "Market, business model, competition and what comes next", "start": "market"}
+  },
+  "faces": {
+    "archivo": {"family": "Archivo", "href": "https://fonts.googleapis.com/css2?family=Archivo:wght@400..800&display=swap"}
+  },
+  "designSystems": []
+}
