@@ -71,6 +71,8 @@ const playback = new AgentPlayback()
 let refreshTimer: number | undefined
 let initializing: Promise<void> | null = null
 let lineSeq = 0
+let voiceStartTimer: number | undefined
+const VOICE_START_TIMEOUT_MS = 30_000
 const commitKeys = new Map<string, string>()
 
 const nextId = () => `l${++lineSeq}`
@@ -149,6 +151,7 @@ export const useMirror = create<MirrorState>((set, get) => {
         set({ userSpeaking: Boolean(d.speaking) })
         return
       case 'VOICE_STARTED': {
+        window.clearTimeout(voiceStartTimer)
         const left = get().metrics?.voice_remaining_seconds ?? get().voiceMaxSeconds
         const again = get().voice === 'live'
         set({ voice: 'live', voiceEndsAt: left > 0 && !get().voiceEndsAt ? Date.now() + left * 1000 : get().voiceEndsAt })
@@ -202,6 +205,7 @@ export const useMirror = create<MirrorState>((set, get) => {
         break
       case 'ERROR':
         if (d.code === 'ASSEMBLYAI_UNAVAILABLE' || d.code === 'SESSION_EXPIRED') {
+          window.clearTimeout(voiceStartTimer)
           set({ voice: 'error' })
           void mic.stop()
         }
@@ -411,7 +415,8 @@ export const useMirror = create<MirrorState>((set, get) => {
     toggleVoice: async () => {
       const { voice } = get()
       if (voice === 'live' || voice === 'starting') {
-        socket?.send({ type: 'voice.stop' })
+        window.clearTimeout(voiceStartTimer)
+        socket?.send({ type: 'voice.stop' }, true)
         await mic.stop()
         set({ voice: 'off', userSpeaking: false, micLevel: 0, voiceEndsAt: null })
         return
@@ -427,7 +432,14 @@ export const useMirror = create<MirrorState>((set, get) => {
           (b64) => socket?.send({ type: 'voice.audio', audio: b64 }),
           (level) => set({ micLevel: level }),
         )
-        socket?.send({ type: 'voice.start' })
+        socket?.send({ type: 'voice.start' }, true) // waits for the socket if the page has only just loaded
+        window.clearTimeout(voiceStartTimer)
+        voiceStartTimer = window.setTimeout(() => {
+          if (get().voice !== 'starting') return
+          void mic.stop()
+          set({ voice: 'error', userSpeaking: false, micLevel: 0 })
+          addSystem('Voice did not start within 30 seconds. Check your connection and press Start voice again; typed commands still work.', 'error')
+        }, VOICE_START_TIMEOUT_MS)
       } catch (err) {
         set({ voice: 'error' })
         addSystem(`Microphone unavailable: ${err instanceof Error ? err.message : String(err)}`, 'error')
