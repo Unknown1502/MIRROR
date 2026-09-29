@@ -79,7 +79,7 @@ Open <http://127.0.0.1:8000>. Without an AssemblyAI key, voice is disabled and t
 
 For UI development, run the backend as above and `npm run dev` in `apps/web` (port 5173, proxied to the backend). With Docker: `docker compose up --build`.
 
-**Public demo:** `python scripts/deploy_hf_space.py --space <hf-user>/mirror` deploys to a Hugging Face Space with per-visitor sandboxes, voice time caps, rate limits and the key as a Space secret. See [docs/deploy.md](docs/deploy.md).
+**Public demo:** [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Unknown1502/MIRROR) `render.yaml` deploys it to Render's free tier with per-visitor sandboxes, voice time caps, rate limits and the AssemblyAI key as a secret. Hugging Face Spaces also works (`scripts/deploy_hf_space.py`, needs PRO). See [docs/deploy.md](docs/deploy.md).
 
 ## Demo
 

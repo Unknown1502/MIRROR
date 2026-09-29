@@ -1,13 +1,14 @@
 name: Keep the demo awake
 
-# Free Hugging Face Spaces sleep after 48 hours without traffic. Judges should never meet a
-# cold start, so this pings the health endpoint every 6 hours.
+# Render's free tier sleeps after 15 minutes without traffic and takes about a minute to wake.
+# Judges should never meet that, so this pings the health endpoint every 10 minutes
+# (one free service running all month fits Render's 750 free hours).
 # Set the repository variable MIRROR_URL (Settings > Secrets and variables > Actions > Variables),
-# e.g. https://<user>-mirror.hf.space
+# e.g. https://mirror-xxxx.onrender.com
 
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
