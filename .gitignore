@@ -24,3 +24,6 @@ apps/web/dist/
 /submission/deck-pages/
 /video-build/
 /submission/*.mp4
+
+# Private: never pushed
+/build plan.md
