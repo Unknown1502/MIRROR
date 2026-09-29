@@ -22,3 +22,5 @@ apps/web/dist/
 /recordings/
 /voice-samples/
 /submission/deck-pages/
+/video-build/
+/submission/*.mp4

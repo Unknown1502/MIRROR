@@ -58,12 +58,16 @@ def save_wav(path: Path, pcm: bytes) -> None:
         w.writeframes(pcm)
 
 
-async def say_all(settings, voice: str, lines: list[str]) -> dict[str, bytes]:
+def exact(text: str, line: str) -> bool:
+    return words(text) == words(line)
+
+
+async def say_all(settings, voice: str, lines: list[str], prompt: str = PROMPT, accept=exact) -> dict[str, bytes]:
     out: dict[str, bytes] = {}
     async with websockets.connect(settings.assemblyai_agent_url, max_size=2**23, open_timeout=10,
                                   additional_headers={"Authorization": f"Bearer {settings.assemblyai_api_key}"}) as ws:
         await ws.send(json.dumps({"type": "session.update", "session": {
-            "system_prompt": PROMPT,
+            "system_prompt": prompt,
             "input": {"format": {"encoding": "audio/pcm"}},
             "output": {"voice": voice, "format": {"encoding": "audio/pcm"}},
         }}))
@@ -85,7 +89,7 @@ async def say_all(settings, voice: str, lines: list[str]) -> dict[str, bytes]:
                         break
                     elif t in ("session.error", "error"):
                         raise RuntimeError(f"AssemblyAI: {e}")
-                ok = words(text) == words(line) and len(pcm) > 4800
+                ok = accept(text, line) and len(pcm) > 4800
                 print(f"  {voice:8} {'ok ' if ok else 'retry'} {len(pcm) / 48000:4.1f}s  said: {text!r}", flush=True)
                 if ok:
                     out[line] = bytes(pcm)
