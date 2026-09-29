@@ -48,14 +48,14 @@ The rule book scores each criterion from 1 to 5.
 
 1. **Push the code.** Create an empty public repository on GitHub (no README), then:
    ```bash
-   git remote add origin https://github.com/<you>/mirror.git
+   git remote add origin https://github.com/Unknown1502/MIRROR.git   # done
    git push -u origin main
    ```
 2. **Deploy the demo.**
    ```bash
    pip install huggingface_hub
    huggingface-cli login
-   python scripts/deploy_hf_space.py --space <hf-user>/mirror --repo-url https://github.com/<you>/mirror
+   python scripts/deploy_hf_space.py --space prajwalsutar899/mirror --repo-url https://github.com/Unknown1502/MIRROR
    ```
    Wait for the Space to build (a few minutes), open `https://<hf-user>-mirror.hf.space` and watch the replay once.
    Then have Claude run `scripts/e2e_live_browser.py` against that URL to confirm live voice there.

@@ -80,5 +80,5 @@ Only an explicit "commit" executes, bound by an HMAC token to one version, one s
 
 Inventory is the proof domain. The contract, action plus state plus simulator plus consequences plus commit plus verifier, fits procurement, IAM changes, cloud operations or scheduling: anywhere a voice agent can change something that is expensive to change back.
 
-Demo: <DEMO_URL>
-Code: <REPO_URL>
+Demo: https://prajwalsutar899-mirror.hf.space
+Code: https://github.com/Unknown1502/MIRROR
